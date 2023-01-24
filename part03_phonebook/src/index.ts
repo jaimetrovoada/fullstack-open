@@ -1,9 +1,11 @@
 import express from "express";
 import personsRouter, { data } from "./routes/api/persons";
+import morgan from "morgan"
 
 const app = express();
 
 app.use(express.json());
+app.use(morgan('tiny'))
 
 app.use("/api/persons", personsRouter);
 
