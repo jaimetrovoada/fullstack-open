@@ -42,4 +42,12 @@ router.get("/:id", (req, res) => {
   }
 });
 
+router.delete("/:id", (req, res) => {
+  const id = req.params.id;
+
+  data = data.filter((val) => val.id !== Number(id));
+
+  res.status(204).end();
+});
+
 export default router;
