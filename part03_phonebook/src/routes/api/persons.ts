@@ -25,8 +25,6 @@ export let data = [
 
 const router = express.Router();
 
-router.use(express.json());
-
 router.get("/", (req, res) => {
   res.json(data);
 });
@@ -48,6 +46,35 @@ router.delete("/:id", (req, res) => {
   data = data.filter((val) => val.id !== Number(id));
 
   res.status(204).end();
+});
+
+router.post("/", (req, res) => {
+  const genId = (): number => {
+    let id: number = Math.random() * 1000;
+    if (data.find((val) => val.id === id)) genId();
+    return Number(id.toFixed(0));
+  };
+
+  const person = {
+    id: genId(),
+    name: req.body.name,
+    number: req.body.number,
+  };
+
+  if (!person.name) {
+    return res.status(400).json({ error: "name required" });
+  } else if (!person.number) {
+    return res.status(400).json({ error: "number required" });
+  } else if (
+    data.find((val) => val.name.toLowerCase() === person.name.toLowerCase())
+  ) {
+    return res
+      .status(400)
+      .json({ error: "name already in the phone book. name must be unique" });
+  } else {
+    data = data.concat(person);
+    res.json(data);
+  }
 });
 
 export default router;

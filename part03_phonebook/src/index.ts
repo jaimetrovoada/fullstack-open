@@ -3,6 +3,8 @@ import personsRouter, { data } from "./routes/api/persons";
 
 const app = express();
 
+app.use(express.json());
+
 app.use("/api/persons", personsRouter);
 
 app.get("/info", (req, res) => {

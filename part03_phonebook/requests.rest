@@ -11,3 +11,43 @@ GET http://localhost:3001/api/persons/1
 ###
 
 DELETE http://localhost:3001/api/persons/1
+
+###
+
+POST http://localhost:3001/api/persons/ HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Mike Murdock",
+    "number": "111-333-222"
+}
+
+###
+
+POST http://localhost:3001/api/persons/ HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Dan Abramov",
+    "number": "111-333-222"
+}
+
+###
+
+POST http://localhost:3001/api/persons/ HTTP/1.1
+content-type: application/json
+
+{
+    "name": "",
+    "number": "111-333-222"
+}
+
+###
+
+POST http://localhost:3001/api/persons/ HTTP/1.1
+content-type: application/json
+
+{
+    "name": "No Number",
+    "number": ""
+}
