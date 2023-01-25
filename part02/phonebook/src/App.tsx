@@ -17,7 +17,10 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
 
-  const [message, setMessage] = useState<string | null>(null);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    msg: string;
+  } | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,33 +38,38 @@ const App = () => {
           name: sameName.name,
           number: newNumber,
         })
-        .then((res) =>
+        .then((res) => {
           setPersons((prev) =>
             prev.map((person) =>
               person.id !== sameName.id ? person : res.data
             )
-          )
-        )
-        .finally(() => {
-          setMessage(`Changed ${sameName.name} number`);
+          );
+
+          setMessage({
+            type: "success",
+            msg: `Changed ${sameName.name} number`,
+          });
           setTimeout(() => {
             setMessage(null);
           }, 5000);
-        });
-
+        })
+        .catch((error) =>
+          setMessage({
+            type: "error",
+            msg: `Information of ${sameName.name} has already been removed from the server`,
+          })
+        );
       return;
     }
 
     const newPersons = { name: newName, number: newNumber };
-    personsService
-      .create(newPersons)
-      .then((res) => setPersons((prev) => prev.concat(res.data)))
-      .finally(() => {
-        setMessage(`Added ${newPersons.name}`);
-        setTimeout(() => {
-          setMessage(null);
-        }, 5000);
-      });
+    personsService.create(newPersons).then((res) => {
+      setPersons((prev) => prev.concat(res.data));
+      setMessage({ type: "success", msg: `Added ${newPersons.name}` });
+      setTimeout(() => {
+        setMessage(null);
+      }, 5000);
+    });
   };
 
   const handleName = (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -75,10 +83,16 @@ const App = () => {
     setNameFilter(e.target.value);
 
   const handleDelete = (id: number) => {
-    window.alert(`Delete ${persons.find((person) => person.id === id)?.name}?`);
+    const delPerson = persons.find((person) => person.id === id)?.name;
     personsService
       .remove(id)
-      .then(() => setPersons((prev) => prev.filter((val) => val.id !== id)));
+      .then(() => setPersons((prev) => prev.filter((val) => val.id !== id)))
+      .catch((error) =>
+        setMessage({
+          type: "error",
+          msg: `Information of ${delPerson} has already been removed from the server`,
+        })
+      );
   };
 
   return (
