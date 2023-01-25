@@ -3,6 +3,8 @@ import PersonsForm from "./components/PersonsForm";
 import PersonsFilter from "./components/PersonsFilter";
 import PersonsList from "./components/PersonsList";
 import personsService from "./services/persons";
+import "./index.css";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState<
@@ -14,6 +16,8 @@ const App = () => {
   }, []);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
+
+  const [message, setMessage] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,14 +41,27 @@ const App = () => {
               person.id !== sameName.id ? person : res.data
             )
           )
-        );
+        )
+        .finally(() => {
+          setMessage(`Changed ${sameName.name} number`);
+          setTimeout(() => {
+            setMessage(null);
+          }, 5000);
+        });
+
       return;
     }
 
     const newPersons = { name: newName, number: newNumber };
     personsService
       .create(newPersons)
-      .then((res) => setPersons((prev) => prev.concat(res.data)));
+      .then((res) => setPersons((prev) => prev.concat(res.data)))
+      .finally(() => {
+        setMessage(`Added ${newPersons.name}`);
+        setTimeout(() => {
+          setMessage(null);
+        }, 5000);
+      });
   };
 
   const handleName = (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -67,6 +84,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} />
       <PersonsFilter handleFilter={handleFilter} />
       <h3>Add a new</h3>
       <PersonsForm
