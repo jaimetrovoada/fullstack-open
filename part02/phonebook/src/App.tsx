@@ -2,20 +2,15 @@ import React, { useEffect, useState } from "react";
 import PersonsForm from "./components/PersonsForm";
 import PersonsFilter from "./components/PersonsFilter";
 import PersonsList from "./components/PersonsList";
-import axios from "axios";
+import personsService from "./services/persons";
 
 const App = () => {
   const [persons, setPersons] = useState<
     Array<{ name: string; number: string; id: number }>
   >([]);
 
-  const url = "http://localhost:3001/persons";
-  const fetchData = () => {
-    axios.get(url).then((res) => setPersons(res.data));
-  };
-
   useEffect(() => {
-    fetchData();
+    personsService.getAll().then((res) => setPersons(res.data));
   }, []);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
@@ -30,8 +25,8 @@ const App = () => {
       return;
     }
     const newPersons = { name: newName, number: newNumber };
-    axios
-      .post(url, newPersons)
+    personsService
+      .create(newPersons)
       .then((res) => setPersons((prev) => prev.concat(res.data)));
   };
 
@@ -45,6 +40,13 @@ const App = () => {
   const handleFilter = (e: React.ChangeEvent<HTMLInputElement>) =>
     setNameFilter(e.target.value);
 
+  const handleDelete = (id: number) => {
+    window.alert(`Delete ${persons.find((person) => person.id === id)?.name}?`);
+    personsService
+      .remove(id)
+      .then(() => setPersons((prev) => prev.filter((val) => val.id !== id)));
+  };
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -56,7 +58,11 @@ const App = () => {
         handleNumber={handleNumber}
       />
       <h3>Numbers</h3>
-      <PersonsList persons={persons} nameFilter={nameFilter} />
+      <PersonsList
+        persons={persons}
+        nameFilter={nameFilter}
+        handleDelete={handleDelete}
+      />
     </div>
   );
 };

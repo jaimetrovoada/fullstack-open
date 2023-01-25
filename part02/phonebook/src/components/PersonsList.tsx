@@ -3,9 +3,11 @@ import React from "react";
 const PersonsList = ({
   persons,
   nameFilter,
+  handleDelete,
 }: {
   persons: { name: string; number: string; id: number }[];
   nameFilter: string;
+  handleDelete: (id: number) => void;
 }) => {
   return (
     <>
@@ -16,6 +18,7 @@ const PersonsList = ({
         .map((person) => (
           <div key={person.id}>
             {person.name} {person.number}
+            <button onClick={() => handleDelete(person.id)}>delete</button>
           </div>
         ))}
     </>
