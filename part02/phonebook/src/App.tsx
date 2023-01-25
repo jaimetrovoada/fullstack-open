@@ -9,10 +9,9 @@ const App = () => {
     Array<{ name: string; number: string; id: number }>
   >([]);
 
+  const url = "http://localhost:3001/persons";
   const fetchData = () => {
-    axios
-      .get("http://localhost:3001/persons")
-      .then((res) => setPersons(res.data));
+    axios.get(url).then((res) => setPersons(res.data));
   };
 
   useEffect(() => {
@@ -30,11 +29,10 @@ const App = () => {
       window.alert(`${newName} is already added to the phonebook`);
       return;
     }
-    const newPersons = [
-      ...persons,
-      { name: newName, number: newNumber, id: persons[-1].id + 1 },
-    ];
-    setPersons(newPersons);
+    const newPersons = { name: newName, number: newNumber };
+    axios
+      .post(url, newPersons)
+      .then((res) => setPersons((prev) => prev.concat(res.data)));
   };
 
   const handleName = (e: React.ChangeEvent<HTMLInputElement>) =>
