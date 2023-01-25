@@ -15,6 +15,17 @@ const Statistics = ({
   avg: number;
   positive: number;
 }) => {
+  const noFeedback = total === 0;
+  if (noFeedback) {
+    return (
+      <>
+        <h2>statistics</h2>
+        <div>
+          <p>No feedback given.</p>
+        </div>
+      </>
+    );
+  }
   return (
     <>
       <h2>statistics</h2>
