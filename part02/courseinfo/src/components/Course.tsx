@@ -12,12 +12,12 @@ const Course = ({
     parts: { id: number; name: string; exercises: number }[];
   };
 }) => {
-  const total = course.parts.reduce((prev, curr) => prev + curr.exercises, 0);
+  const total = course.parts.reduce((sum, val) => sum + val.exercises, 0);
   return (
     <div>
       <Header course={course.name} />
       <Content parts={course.parts} />
-      {/*  <Total total={total} /> */}
+      <Total total={total} />
     </div>
   );
 };
