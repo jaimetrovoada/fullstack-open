@@ -17,6 +17,7 @@ const Statistics = ({
   positive: number;
 }) => {
   const noFeedback = total === 0;
+  const [tableView, setTableView] = React.useState(true);
   if (noFeedback) {
     return (
       <>
@@ -27,9 +28,48 @@ const Statistics = ({
       </>
     );
   }
+
+  if (tableView) {
+    return (
+      <>
+        <h2>statistics</h2>
+        <button onClick={() => setTableView(false)}>change to list view</button>
+        <table>
+          <tbody>
+            <tr>
+              <td>good</td>
+              <td>{good}</td>
+            </tr>
+            <tr>
+              <td>neutral</td>
+              <td>{neutral}</td>
+            </tr>
+            <tr>
+              <td>bad</td>
+              <td>{bad}</td>
+            </tr>
+            <tr>
+              <td>total</td>
+              <td>{total}</td>
+            </tr>
+            <tr>
+              <td>average</td>
+              <td>{avg}</td>
+            </tr>
+            <tr>
+              <td>positive</td>
+              <td>{positive}%</td>
+            </tr>
+          </tbody>
+        </table>
+      </>
+    );
+  }
+
   return (
     <>
       <h2>statistics</h2>
+      <button onClick={() => setTableView(true)}>change to table view</button>
       <div>
         <StatisticsLine text={"good"} value={good.toString()} />
         <StatisticsLine text={"neutral"} value={neutral.toString()} />
