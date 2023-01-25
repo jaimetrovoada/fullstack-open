@@ -1,4 +1,5 @@
 import React from "react";
+import Part from "./Part";
 
 const Content = ({
   parts,
@@ -8,11 +9,7 @@ const Content = ({
   return (
     <div>
       {parts.map((part, index) => {
-        return (
-          <p key={index}>
-            {part.part} - {part.exercises}
-          </p>
-        );
+        return <Part key={index} exercises={part.exercises} part={part.part} />;
       })}
     </div>
   );
