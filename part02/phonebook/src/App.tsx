@@ -18,12 +18,29 @@ const App = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (
-      persons.find((val) => val.name.toLowerCase() === newName.toLowerCase())
-    ) {
-      window.alert(`${newName} is already added to the phonebook`);
+    const sameName = persons.find(
+      (val) => val.name.toLowerCase() === newName.toLowerCase()
+    );
+
+    if (sameName && sameName.number !== newNumber) {
+      window.alert(
+        `${newName} is already added to the phonebook, replace old number with a new one?`
+      );
+      personsService
+        .update(sameName.id, {
+          name: sameName.name,
+          number: newNumber,
+        })
+        .then((res) =>
+          setPersons((prev) =>
+            prev.map((person) =>
+              person.id !== sameName.id ? person : res.data
+            )
+          )
+        );
       return;
     }
+
     const newPersons = { name: newName, number: newNumber };
     personsService
       .create(newPersons)
