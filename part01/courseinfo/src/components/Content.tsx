@@ -4,12 +4,12 @@ import Part from "./Part";
 const Content = ({
   parts,
 }: {
-  parts: Array<{ part: string; exercises: number }>;
+  parts: Array<{ name: string; exercises: number }>;
 }) => {
   return (
     <div>
       {parts.map((part, index) => {
-        return <Part key={index} exercises={part.exercises} part={part.part} />;
+        return <Part key={index} exercises={part.exercises} name={part.name} />;
       })}
     </div>
   );
