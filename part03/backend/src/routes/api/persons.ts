@@ -54,32 +54,21 @@ router.delete("/:id", (req, res) => {
 });
 
 router.post("/", (req, res) => {
-  const genId = (): number => {
-    let id: number = Math.random() * 1000;
-    if (data.find((val) => val.id === id)) genId();
-    return Number(id.toFixed(0));
-  };
+  const name = req.body.name;
+  const number = req.body.number;
+  console.log({ name, number });
 
-  const person = {
-    id: genId(),
-    name: req.body.name,
-    number: req.body.number,
-  };
-
-  if (!person.name) {
+  if (!name) {
     return res.status(400).json({ error: "name required" });
-  } else if (!person.number) {
-    return res.status(400).json({ error: "number required" });
-  } else if (
-    data.find((val) => val.name.toLowerCase() === person.name.toLowerCase())
-  ) {
-    return res
-      .status(400)
-      .json({ error: "name already in the phone book. name must be unique" });
-  } else {
-    data = data.concat(person);
-    res.json(data);
   }
+  if (!number) {
+    return res.status(400).json({ error: "number required" });
+  }
+
+  phonebookModel.addPerson(name, number).then((result) => {
+    console.log({ result });
+    res.json(result);
+  });
 });
 
 export default router;

@@ -38,7 +38,16 @@ const getById = (id: string) => {
   return Person.findById(id);
 };
 
+const addPerson = (name: string, number: string) => {
+  const person = new Person({
+    name: name,
+    number: number,
+  });
+  return person.save();
+};
+
 export default {
   getAll: getAll,
   getById: getById,
+  addPerson: addPerson,
 } as const;
