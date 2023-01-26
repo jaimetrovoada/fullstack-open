@@ -46,8 +46,13 @@ const addPerson = (name: string, number: string) => {
   return person.save();
 };
 
+const removePerson = (id: string) => {
+  return Person.findByIdAndRemove(id);
+};
+
 export default {
   getAll: getAll,
   getById: getById,
   addPerson: addPerson,
+  removePerson: removePerson,
 } as const;

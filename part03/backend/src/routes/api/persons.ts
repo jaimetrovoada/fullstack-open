@@ -1,6 +1,5 @@
 import express from "express";
 import phonebookModel from "../../model/phonebook";
-import mongoose from "mongoose";
 
 export let data = [
   {
@@ -47,10 +46,10 @@ router.get("/:id", (req, res) => {
 
 router.delete("/:id", (req, res) => {
   const id = req.params.id;
-
-  data = data.filter((val) => val.id !== Number(id));
-
-  res.status(204).end();
+  phonebookModel.removePerson(id).then((result) => {
+    console.log({result})
+    res.status(204).end();
+  });
 });
 
 router.post("/", (req, res) => {
