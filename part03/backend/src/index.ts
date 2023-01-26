@@ -4,7 +4,6 @@ import morgan from "morgan";
 import cors from "cors";
 import * as dotenv from "dotenv";
 import phonebookModel from "./model/phonebook";
-import mongoose from "mongoose";
 
 const app = express();
 
@@ -55,6 +54,19 @@ app.get("/info", (req, res) => {
     );
   });
 });
+
+const errorHandler = (error, req, res, next) => {
+  console.error(error.message);
+
+  if (error.name === "CastError") {
+    return res.status(400).send({ error: "malformatted id" });
+  }
+
+  next(error);
+};
+
+// this has to be the last loaded middleware.
+app.use(errorHandler);
 
 app.listen(process.env.PORT, () =>
   console.log(`server started on http://localhost:${process.env.PORT}`)

@@ -33,21 +33,26 @@ router.get("/", (req, res) => {
   });
 });
 
-router.get("/:id", (req, res) => {
+router.get("/:id", (req, res, next) => {
   const id = req.params.id;
-  phonebookModel.getById(id).then((person) => {
-    if (person) {
-      res.json(person);
-    } else {
-      res.status(404).end();
-    }
-  });
+  phonebookModel
+    .getById(id)
+    .then((person) => {
+      if (person) {
+        res.json(person);
+      } else {
+        res.status(404).end();
+      }
+    })
+    .catch((error) => {
+      next(error);
+    });
 });
 
 router.delete("/:id", (req, res) => {
   const id = req.params.id;
   phonebookModel.removePerson(id).then((result) => {
-    console.log({result})
+    console.log({ result });
     res.status(204).end();
   });
 });
