@@ -1,37 +1,18 @@
 import express from "express";
 import phonebookModel from "../../model/phonebook";
-import { nextTick } from "process";
-
-export let data = [
-  {
-    id: 1,
-    name: "Arto Hellas",
-    number: "040-123456",
-  },
-  {
-    id: 2,
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: 3,
-    name: "Dan Abramov",
-    number: "12-43-234345",
-  },
-  {
-    id: 4,
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-  },
-];
 
 const router = express.Router();
 
-router.get("/", (req, res) => {
-  phonebookModel.getAll().then((result) => {
-    console.log({ result });
-    res.json(result);
-  });
+router.get("/", (req, res, next) => {
+  phonebookModel
+    .getAll()
+    .then((result) => {
+      console.log({ result });
+      res.json(result);
+    })
+    .catch((error) => {
+      next(error);
+    });
 });
 
 router.get("/:id", (req, res, next) => {

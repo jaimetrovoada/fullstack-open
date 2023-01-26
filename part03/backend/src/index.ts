@@ -44,15 +44,20 @@ app.use(
 
 app.use("/api/persons", personsRouter);
 
-app.get("/info", (req, res) => {
-  phonebookModel.getAll().then((result) => {
-    console.log({ result });
-    const numOfEntries = result.length;
-    const date = new Date().toString();
-    res.send(
-      `<p>Phonebook has info for ${numOfEntries} people.</p><p>${date}</p>`
-    );
-  });
+app.get("/info", (req, res, next) => {
+  phonebookModel
+    .getAll()
+    .then((result) => {
+      console.log({ result });
+      const numOfEntries = result.length;
+      const date = new Date().toString();
+      res.send(
+        `<p>Phonebook has info for ${numOfEntries} people.</p><p>${date}</p>`
+      );
+    })
+    .catch((error) => {
+      next(error);
+    });
 });
 
 const errorHandler = (error, req, res, next) => {
