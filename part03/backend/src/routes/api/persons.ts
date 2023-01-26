@@ -1,5 +1,6 @@
 import express from "express";
 import phonebookModel from "../../model/phonebook";
+import { nextTick } from "process";
 
 export let data = [
   {
@@ -49,15 +50,20 @@ router.get("/:id", (req, res, next) => {
     });
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", (req, res, next) => {
   const id = req.params.id;
-  phonebookModel.removePerson(id).then((result) => {
-    console.log({ result });
-    res.status(204).end();
-  });
+  phonebookModel
+    .removePerson(id)
+    .then((result) => {
+      console.log({ result });
+      res.status(204).end();
+    })
+    .catch((error) => {
+      next(error);
+    });
 });
 
-router.post("/", (req, res) => {
+router.post("/", (req, res, next) => {
   const name = req.body.name;
   const number = req.body.number;
   console.log({ name, number });
@@ -69,10 +75,31 @@ router.post("/", (req, res) => {
     return res.status(400).json({ error: "number required" });
   }
 
-  phonebookModel.addPerson(name, number).then((result) => {
-    console.log({ result });
-    res.json(result);
-  });
+  phonebookModel
+    .addPerson(name, number)
+    .then((result) => {
+      console.log({ result });
+      res.json(result);
+    })
+    .catch((error) => {
+      next(error);
+    });
+});
+
+router.put("/:id", (req, res, next) => {
+  const id = req.params.id;
+  const number = req.body.number;
+  const name = req.body.name;
+
+  phonebookModel
+    .updateInfo(id, { name: name, number: number })
+    .then((result) => {
+      console.log({ result });
+      res.json(result);
+    })
+    .catch((error) => {
+      next(error);
+    });
 });
 
 export default router;

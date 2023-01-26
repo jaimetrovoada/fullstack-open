@@ -25,9 +25,46 @@ const App = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    const sameName = persons.find(
+      (val) => val.name.toLowerCase() === newName.toLowerCase()
+    );
+
+    if (sameName && sameName.number !== newNumber) {
+      window.alert(
+        `${newName} is already added to the phonebook, replace old number with a new one?`
+      );
+      personsService
+        .update(sameName.id, {
+          name: sameName.name,
+          number: newNumber,
+        })
+        .then((res) => {
+          setPersons((prev) =>
+            prev.map((person) =>
+              person.id !== sameName.id ? person : res.data
+            )
+          );
+
+          setMessage({
+            type: "success",
+            msg: `Changed ${sameName.name} number`,
+          });
+          setTimeout(() => {
+            setMessage(null);
+          }, 5000);
+        })
+        .catch((error) =>
+          setMessage({
+            type: "error",
+            msg: `Information of ${sameName.name} has already been removed from the server`,
+          })
+        );
+      return;
+    }
+
     const newPersons = { name: newName, number: newNumber };
     personsService.create(newPersons).then((res) => {
-      setPersons(prev => prev.concat(res.data));
+      setPersons((prev) => prev.concat(res.data));
       setMessage({ type: "success", msg: `Added ${newPersons.name}` });
       setTimeout(() => {
         setMessage(null);

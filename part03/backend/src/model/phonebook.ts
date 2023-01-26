@@ -50,9 +50,14 @@ const removePerson = (id: string) => {
   return Person.findByIdAndRemove(id);
 };
 
+const updateInfo = (id: string, update: { name: string; number: string }) => {
+  return Person.findByIdAndUpdate(id, update, { new: true });
+};
+
 export default {
   getAll: getAll,
   getById: getById,
   addPerson: addPerson,
   removePerson: removePerson,
+  updateInfo: updateInfo,
 } as const;
