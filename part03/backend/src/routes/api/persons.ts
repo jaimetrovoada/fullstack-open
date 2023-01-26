@@ -1,4 +1,6 @@
 import express from "express";
+import phonebookModel from "../../model/phonebook";
+import mongoose from "mongoose";
 
 export let data = [
   {
@@ -26,18 +28,21 @@ export let data = [
 const router = express.Router();
 
 router.get("/", (req, res) => {
-  res.json(data);
+  phonebookModel.getAll().then((result) => {
+    console.log({ result });
+    res.json(result);
+  });
 });
 
 router.get("/:id", (req, res) => {
   const id = req.params.id;
-  const person = data.find((val) => val.id === Number(id));
-
-  if (person) {
-    res.json(person);
-  } else {
-    res.status(404).end();
-  }
+  phonebookModel.getById(id).then((person) => {
+    if (person) {
+      res.json(person);
+    } else {
+      res.status(404).end();
+    }
+  });
 });
 
 router.delete("/:id", (req, res) => {

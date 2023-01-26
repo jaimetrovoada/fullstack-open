@@ -1,10 +1,14 @@
 import express from "express";
-import personsRouter, { data } from "./routes/api/persons";
+import personsRouter from "./routes/api/persons";
 import morgan from "morgan";
 import cors from "cors";
+import * as dotenv from "dotenv";
+import phonebookModel from "./model/phonebook";
+import mongoose from "mongoose";
 
 const app = express();
 
+dotenv.config();
 app.use(express.static("frontend_build"));
 
 app.use(cors());
@@ -42,13 +46,16 @@ app.use(
 app.use("/api/persons", personsRouter);
 
 app.get("/info", (req, res) => {
-  const numOfEntries = data.length;
-  const date = new Date().toString();
-  res.send(
-    `<p>Phonebook has info for ${numOfEntries} people.</p><p>${date}</p>`
-  );
+  phonebookModel.getAll().then((result) => {
+    console.log({ result });
+    const numOfEntries = result.length;
+    const date = new Date().toString();
+    res.send(
+      `<p>Phonebook has info for ${numOfEntries} people.</p><p>${date}</p>`
+    );
+  });
 });
 
-app.listen(process.env.PORT || 3001, () =>
-  console.log(`server started on http://localhost:${process.env.PORT || 3001}`)
+app.listen(process.env.PORT, () =>
+  console.log(`server started on http://localhost:${process.env.PORT}`)
 );

@@ -16,7 +16,7 @@ mongoose.connect(url);
 
 const personSchema = new mongoose.Schema({
   name: String,
-  phoneNumber: String,
+  number: String,
 });
 
 const Person = mongoose.model("Person", personSchema);
@@ -27,7 +27,7 @@ if (process.argv.length > 3) {
 
   const person = new Person({
     name: name,
-    phoneNumber: phoneNumber,
+    number: phoneNumber,
   });
 
   person.save().then((result) => {
@@ -40,10 +40,10 @@ if (process.argv.length > 3) {
 if (process.argv.length === 3) {
   Person.find({}).then((result) => {
     if (!result.length || !result) {
-      console.log("phonebook is empty")
+      console.log("phonebook is empty");
     }
     result.forEach((person) => {
-      console.log(`${person.name} ${person.phoneNumber}`);
+      console.log(`${person.name} ${person.number}`);
     });
     mongoose.connection.close();
   });
