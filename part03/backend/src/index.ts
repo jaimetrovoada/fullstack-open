@@ -1,8 +1,13 @@
 import express from "express";
 import personsRouter, { data } from "./routes/api/persons";
 import morgan from "morgan";
+import cors from "cors";
 
 const app = express();
+
+app.use(express.static("frontend_build"));
+
+app.use(cors());
 
 app.use(express.json());
 
