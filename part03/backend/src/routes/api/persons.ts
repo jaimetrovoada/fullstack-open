@@ -47,14 +47,6 @@ router.delete("/:id", (req, res, next) => {
 router.post("/", (req, res, next) => {
   const name = req.body.name;
   const number = req.body.number;
-  console.log({ name, number });
-
-  if (!name) {
-    return res.status(400).json({ error: "name required" });
-  }
-  if (!number) {
-    return res.status(400).json({ error: "number required" });
-  }
 
   phonebookModel
     .addPerson(name, number)
@@ -63,6 +55,7 @@ router.post("/", (req, res, next) => {
       res.json(result);
     })
     .catch((error) => {
+      console.log({ error });
       next(error);
     });
 });

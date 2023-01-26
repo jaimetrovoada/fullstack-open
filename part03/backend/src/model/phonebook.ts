@@ -16,8 +16,23 @@ mongoose
   });
 
 const personSchema = new mongoose.Schema({
-  name: String,
-  number: String,
+  name: {
+    type: String,
+    minLength: [3, "Name too short, should be at least 3 characters long"],
+    required: [true, "Name is required"],
+    unique: true,
+  },
+  number: {
+    type: String,
+    minLength: [8, "Number too short, should be at least 8 numbers long"],
+    required: [true, "Number is required"],
+    validate: {
+      validator: function (v) {
+        return /^\d{2,3}\-\d{6,}$/.test(v);
+      },
+      message: (props) => `${props.value} is not a valid phone number!`,
+    },
+  },
 });
 
 personSchema.set("toJSON", {
@@ -29,6 +44,7 @@ personSchema.set("toJSON", {
 });
 
 const Person = mongoose.model("Person", personSchema);
+Person.init();
 
 const getAll = () => {
   return Person.find({});
@@ -51,7 +67,10 @@ const removePerson = (id: string) => {
 };
 
 const updateInfo = (id: string, update: { name: string; number: string }) => {
-  return Person.findByIdAndUpdate(id, update, { new: true });
+  return Person.findByIdAndUpdate(id, update, {
+    new: true,
+    runValidators: true,
+  });
 };
 
 export default {

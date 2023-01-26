@@ -61,11 +61,16 @@ app.get("/info", (req, res, next) => {
 });
 
 const errorHandler = (error, req, res, next) => {
-  console.error(error.message);
+  console.error({ errorMessage: error.message, errorName: error.name });
 
   if (error.name === "CastError") {
     return res.status(400).send({ error: "malformatted id" });
   }
+  if (error.name === "ValidationError") {
+    return res.status(400).send({ error });
+  }
+
+  res.status(400).send({ error });
 
   next(error);
 };

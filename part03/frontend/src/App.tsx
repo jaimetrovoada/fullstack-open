@@ -53,23 +53,41 @@ const App = () => {
             setMessage(null);
           }, 5000);
         })
-        .catch((error) =>
-          setMessage({
-            type: "error",
-            msg: `Information of ${sameName.name} has already been removed from the server`,
-          })
-        );
+        .catch((error) => {
+          if (error.response.data.error.name === "ValidationError") {
+            setMessage({
+              type: "error",
+              msg: error.response.data.error.message,
+            });
+          } else if (error.response.data.error.name === "MongoServerError") {
+            setMessage({
+              type: "error",
+              msg: error.response.data.error.message,
+            });
+          } else {
+            setMessage({
+              type: "error",
+              msg: `Information of ${sameName.name} has already been removed from the server`,
+            });
+          }
+        });
       return;
     }
 
     const newPersons = { name: newName, number: newNumber };
-    personsService.create(newPersons).then((res) => {
-      setPersons((prev) => prev.concat(res.data));
-      setMessage({ type: "success", msg: `Added ${newPersons.name}` });
-      setTimeout(() => {
-        setMessage(null);
-      }, 5000);
-    });
+    personsService
+      .create(newPersons)
+      .then((res) => {
+        setPersons((prev) => prev.concat(res.data));
+        setMessage({ type: "success", msg: `Added ${newPersons.name}` });
+        setTimeout(() => {
+          setMessage(null);
+        }, 5000);
+      })
+      .catch((error) => {
+        console.log({ erro: error.response.data.error });
+        setMessage({ type: "error", msg: error.response.data.error.message });
+      });
   };
 
   const handleName = (e: React.ChangeEvent<HTMLInputElement>) =>

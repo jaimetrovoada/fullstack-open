@@ -42,7 +42,7 @@ POST http://localhost:3001/api/persons/ HTTP/1.1
 content-type: application/json
 
 {
-    "name": "",
+    "name": "Hola",
     "number": "111-333-222"
 }
 
@@ -64,4 +64,14 @@ content-type: application/json
 {
     "name": "Clark Kent",
     "number": "73436745235364"
+}
+
+### short name
+
+POST http://localhost:3001/api/persons/ HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Martinez",
+    "number": "040-5544332211"
 }

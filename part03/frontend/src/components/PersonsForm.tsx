@@ -15,7 +15,7 @@ const PersonsForm = ({
         name: <input type="text" onChange={handleName} />
       </div>
       <div>
-        number: <input type="number" onChange={handleNumber} />
+        number: <input type="text" onChange={handleNumber} />
       </div>
       <div>
         <button type="submit">add</button>
