@@ -11,3 +11,27 @@ Content-Type: application/json
     "url": "https://madjulius.com/blog/rise-of-ai",
     "likes": 100
 }
+
+###
+
+POST http://localhost:3001/api/blogs/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "title": "Machine Learning for Dummies",
+    "author": "Julius Ceasar",
+    "url": "https://madjulius.com/blog/machile-learning-dummies",
+    "likes": 50
+}
+
+###
+
+POST http://localhost:3001/api/blogs/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "title": "Birds Aren't Real",
+    "author": "Mad Max",
+    "url": "https://sanemax.com/blog/birds-no-real",
+    "likes": 50
+}
