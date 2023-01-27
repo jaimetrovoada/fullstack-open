@@ -14,19 +14,50 @@ const favoriteBlog = (blogs: Record<any, any>[]) => {
 	if (blogs.length === 0 || !blogs) {
 		return null
 	}
-    
-	const fav = blogs.reduce((mostLiked, blog) => {
-		if (blog.likes > mostLiked.likes) {
-			return blog
-		}
-		return mostLiked
-	}, { likes: 0 })
-    
+
+	const fav = blogs.reduce(
+		(mostLiked, blog) => {
+			if (blog.likes > mostLiked.likes) {
+				return blog
+			}
+			return mostLiked
+		},
+		{ likes: 0 }
+	)
+
 	return fav
+}
+
+const mostBlogs = (blogs: Record<any, any>[]) => {
+
+	const authorsList = blogs.reduce((blogCount, blog) => {
+		if (blogCount[blog.author]) {
+			blogCount[blog.author]++
+		} else {
+			blogCount[blog.author] = 1
+		}
+		return blogCount
+	}, {})
+
+	let mostBlogsAuthor
+	let mostBlogsCount = 0
+
+	for (const [author, count] of Object.entries(authorsList)) {
+		if (count > mostBlogsCount) {
+			mostBlogsAuthor = author
+			mostBlogsCount = count
+		}
+	}
+
+	return {
+		author: mostBlogsAuthor,
+		blogs: mostBlogsCount,
+	}
 }
 
 export default {
 	dummy,
 	totalLikes,
-	favoriteBlog
+	favoriteBlog,
+	mostBlogs,
 } as const
