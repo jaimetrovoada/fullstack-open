@@ -55,9 +55,35 @@ const mostBlogs = (blogs: Record<any, any>[]) => {
 	}
 }
 
+const mostLikes = (blogs: Record<any, any>[]) => {
+
+	const likesList = blogs.reduce((likesCount, blog) => {
+		if (!likesCount[blog.author]) {
+			likesCount[blog.author] = { author: blog.author, likes: blog.likes }
+		} else {
+			likesCount[blog.author].likes += blog.likes
+		}
+		return likesCount
+	}, {})
+
+	let mostLikesAuthor = null
+	let mostLikesCount = 0
+
+	Object.values(likesList).forEach((author) => {
+		if (author.likes > mostLikesCount) {
+			mostLikesAuthor = author
+			mostLikesCount = author.likes
+		}
+	})
+
+	return  mostLikesAuthor
+	
+}
+
 export default {
 	dummy,
 	totalLikes,
 	favoriteBlog,
 	mostBlogs,
+	mostLikes
 } as const
