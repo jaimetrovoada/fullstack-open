@@ -10,7 +10,8 @@ router.get('/', async (request, response) => {
 })
 
 router.post('/', async (request, response) => {
-	const blog = new Blog(request.body)
+	const newBlog = request.body.likes ? request.body : { ...request.body, likes: 0 }
+	const blog = new Blog(newBlog)
 
 	const result = await blog.save()
 	response.status(201).json(result)

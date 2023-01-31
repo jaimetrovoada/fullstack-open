@@ -104,4 +104,23 @@ describe('POST /api/blogs', () => {
 		expect(content).toContainEqual(newBlog.title)
 	})
 
+	test('likes default to zero', async () => { 
+
+		const newBlog = {
+			title: 'Black Holes',
+			author: 'Stephen Hawkins',
+			url: 'https://stephenhawkins.com/black-holes',
+
+		}
+
+		await api.post('/api/blogs').send(newBlog).expect(201).expect('Content-Type', /application\/json/)
+
+		const res = await api.get('/api/blogs')
+
+		const lastItem = res.body.length - 1
+		const content = res.body[lastItem]
+		
+		expect(content.likes).toBeDefined()
+		expect(content.likes).toBe(0)
+	})
 })
