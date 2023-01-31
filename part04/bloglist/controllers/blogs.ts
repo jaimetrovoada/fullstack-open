@@ -10,6 +10,10 @@ router.get('/', async (request, response) => {
 })
 
 router.post('/', async (request, response) => {
+	if (!request.body.url || !request.body.title) {
+		return response.status(400).end()
+	}
+
 	const newBlog = request.body.likes ? request.body : { ...request.body, likes: 0 }
 	const blog = new Blog(newBlog)
 

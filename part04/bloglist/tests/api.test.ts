@@ -1,7 +1,6 @@
 import app from '../app'
 import supertest from 'supertest'
 import Blog from '../models/blog'
-import { brotliDecompress } from 'zlib'
 
 const api = supertest(app)
 
@@ -123,4 +122,30 @@ describe('POST /api/blogs', () => {
 		expect(content.likes).toBeDefined()
 		expect(content.likes).toBe(0)
 	})
+
+	test('bad request: no title', async () => { 
+
+		const newBlog = {
+			title: '',
+			author: 'Stephen Hawkins',
+			url: 'https://stephenhawkins.com/',
+
+		}
+
+		await api.post('/api/blogs').send(newBlog).expect(400)
+
+	}, )
+
+	test('bad request: no url', async () => { 
+
+		const newBlog = {
+			title: 'Relativity',
+			author: 'Albert Einstein',
+			url: '',
+
+		}
+
+		await api.post('/api/blogs').send(newBlog).expect(400)
+
+	}, )
 })
