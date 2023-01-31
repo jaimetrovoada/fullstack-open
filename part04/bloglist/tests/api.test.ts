@@ -1,6 +1,7 @@
 import app from '../app'
 import supertest from 'supertest'
 import Blog from '../models/blog'
+import { brotliDecompress } from 'zlib'
 
 const api = supertest(app)
 
@@ -72,4 +73,12 @@ describe('GET /api/blogs', () => {
 		expect(response.body).toHaveLength(initialBlogs.length)
 	})
 
+	test('has id property', async () => {
+		const response = await api.get('/api/blogs')
+		response.body.forEach(blog => {
+			
+			expect(blog.id).toBeDefined()
+		})
+
+	})
 })
