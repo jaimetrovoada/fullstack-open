@@ -82,3 +82,26 @@ describe('GET /api/blogs', () => {
 
 	})
 })
+
+describe('POST /api/blogs', () => {
+	test('new blog gets saved', async () => {
+
+		const newBlog = {
+			title: 'Black Holes',
+			author: 'Stephen Hawkins',
+			url: 'https://stephenhawkins.com/black-holes',
+			likes: 10
+
+		}
+
+		await api.post('/api/blogs').send(newBlog).expect(201).expect('Content-Type', /application\/json/)
+
+		const res = await api.get('/api/blogs')
+
+		const content = res.body.map(blog => blog.title)
+		
+		expect(res.body).toHaveLength(initialBlogs.length + 1)
+		expect(content).toContainEqual(newBlog.title)
+	})
+
+})
