@@ -4,8 +4,13 @@ import uniqueValidator from 'mongoose-unique-validator'
 mongoose.set('strictQuery', false)
 
 const userSchema = new mongoose.Schema({
-	name: String,
-	username: String,
+	name:  String,
+	username: {
+		type: String,
+		minLength: [3, 'username too short, min length = 3'],
+		required: [true, 'username required'],
+		unique: true
+	},
 	passwordHash: String,
 	blogs: [{
 		type: mongoose.Schema.Types.ObjectId,

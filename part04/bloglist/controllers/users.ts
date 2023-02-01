@@ -17,15 +17,24 @@ router.get('/', async (req, res ,next) => {
 router.post('/', async (req, res, next) => {
 
 	const { name, username, password } = req.body
-    
-	const saltRounds = 10
-	const passwordHash = await bcrypt.hash(password, saltRounds)
 
-	const newUser = new User({
-		username, name, passwordHash
-	})
-    
 	try {
+		if (!username || !password) {
+			
+			return res.status(400).json({ error: 'username and password required' })
+		}
+
+		if (password.length < 3) {
+			return res.status(400).json({ error: 'password too short, min length = 3' })
+		}
+    
+		const saltRounds = 10
+		const passwordHash = await bcrypt.hash(password, saltRounds)
+
+		const newUser = new User({
+			username, name, passwordHash
+		})
+    
 		const saveUser = await newUser.save()
 		res.status(201).json(saveUser)
 	} catch (exception) {
