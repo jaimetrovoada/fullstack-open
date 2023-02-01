@@ -149,3 +149,15 @@ describe('POST /api/blogs', () => {
 
 	}, )
 })
+
+describe('delete blog', () => {
+	test('delete 2nd note', async () => { 
+		const blogToDel = initialBlogs[1]
+
+		await api.delete(`/api/blogs/${blogToDel._id}`).expect(204)
+
+		const res = await api.get('/api/blogs')
+
+		expect(res.body.length).toBe(initialBlogs.length - 1)
+	}, )
+})

@@ -22,4 +22,17 @@ router.post('/', async (request, response) => {
 
 })
 
+router.delete('/:id', async (req, res, next) => {
+	const id = req.params.id
+	
+	try {
+		await Blog.findByIdAndDelete(id)
+		res.status(204).end()
+	} catch (exception) {
+		next(exception)
+	}
+
+	
+})
+
 export default router
