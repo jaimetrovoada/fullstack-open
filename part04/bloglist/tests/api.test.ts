@@ -150,7 +150,7 @@ describe('POST /api/blogs', () => {
 	}, )
 })
 
-describe('delete blog', () => {
+describe('DELETE blog', () => {
 	test('delete 2nd note', async () => { 
 		const blogToDel = initialBlogs[1]
 
@@ -160,4 +160,29 @@ describe('delete blog', () => {
 
 		expect(res.body.length).toBe(initialBlogs.length - 1)
 	}, )
+})
+
+describe('PUT blog', () => { 
+	test('update blog',async () => { 
+		const blogToUpd = initialBlogs[2]
+
+		const updatedBlog = {
+
+			title: 'Canonical string reduction',
+			author: 'Edsger W. Dijkstra',
+			url: 'https://newlink.com/updated-blog',
+			likes: 20
+		}
+
+		await api.put(`/api/blogs/${blogToUpd._id}`).send(updatedBlog).expect(200)
+
+		const res = await api.get(`/api/blogs/${blogToUpd._id}`)
+
+		expect(res.body.likes).not.toBe(blogToUpd.likes)
+		expect(res.body.url).not.toBe(blogToUpd.url)
+
+		expect(res.body.likes).toBe(updatedBlog.likes)
+		expect(res.body.url).toBe(updatedBlog.url)
+		
+	})
 })
