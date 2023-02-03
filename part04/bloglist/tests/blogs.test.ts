@@ -2,6 +2,8 @@ import app from '../app'
 import supertest from 'supertest'
 import Blog from '../models/blog'
 import User from '../models/user'
+import jwt from 'jsonwebtoken'
+import config from '../utils/config'
 
 const api = supertest(app)
 
@@ -87,24 +89,25 @@ const initialBlogs = [
 
 ]
 
-beforeEach(async () => {
-	await Blog.deleteMany({})
-
-	const blogsObj = initialBlogs.map(blog => new Blog(blog))
-
-	const blogPromiseArr = blogsObj.map(blog => blog.save())
-	
-	await User.deleteMany({})
-
-	const usersObj = initialUsers.map(user => new User(user))
-
-	const userPromiseArr = usersObj.map(user => user.save())
-
-	await Promise.all(blogPromiseArr)
-	await Promise.all(userPromiseArr)
-})
 
 describe('add blogs with user info',() => {
+	beforeEach(async () => {
+		await Blog.deleteMany({})
+	
+		const blogsObj = initialBlogs.map(blog => new Blog(blog))
+	
+		const blogPromiseArr = blogsObj.map(blog => blog.save())
+		
+		await User.deleteMany({})
+	
+		const usersObj = initialUsers.map(user => new User(user))
+	
+		const userPromiseArr = usersObj.map(user => user.save())
+	
+		await Promise.all(blogPromiseArr)
+		await Promise.all(userPromiseArr)
+	})
+
 	test('check if user info is added to blogs', async () => { 
 		const res = await api.get('/api/blogs')
 		// console.log({ res:res.body })
@@ -144,4 +147,61 @@ describe('add blogs with user info',() => {
 			
 	})
     
+})
+
+describe('add blogs only with token', () => {
+	beforeEach(async () => {
+
+		await User.deleteMany({})
+
+		const promiseArr = initialUsers.map(async (user) => await api.post('/api/users').send(user))
+		await Promise.all(promiseArr)
+	}, 100_000)
+
+	test('valid token', async () => {
+
+		const user = await User.findOne({ username: 'luffy' })
+		
+		const userForToken = {
+			username: user.username,
+			id: user._id
+		}
+    
+		const token = jwt.sign(userForToken, config.TOKEN_SECRET)
+		
+		const newBlog = {
+			title: 'Finding new islands',
+			author: 'Monkey D. Luffy',
+			url: 'https://strawhatluffy.com/new-islands',
+			likes: 20
+		}
+		const res = await api.post('/api/blogs').set('Authorization', `Bearer ${token}`).send(newBlog)
+
+
+		expect(res.status).toBe(201)
+		expect(res.body.user).toBeDefined()
+		expect(res.body.user.id).toBeDefined()
+		expect(res.body.user.username).toBe('luffy')
+		expect(res.body.user.name).toBeDefined()
+	})
+
+	/* test('invalid token', async () => {
+
+		const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imx1ZmZ5IiwiaWQiOiI2M2RjZDYxODEzZTQ3YmE2Yzk1MWIxNTQiLCJpYXQiOjE2NzU0MTc3NDJ9.qyAjeHINaDNH0xP288F-7D-VjozVBq0MZ86mlTIKY-k'
+		
+		const newBlog = {
+			title: 'Finding new islands',
+			author: 'Monkey D. Luffy',
+			url: 'https://strawhatluffy.com/new-islands',
+			likes: 20
+		}
+		const res = await api.post('/api/blogs').set('Authorization', `Bearer ${token}`).send(newBlog)
+
+
+		expect(res.status).toBe(401)
+		expect(res.body.user).not.toBeDefined()
+		expect(res.body.user.id).not.toBeDefined()
+		expect(res.body.user.username).not.toBeDefined()
+		expect(res.body.user.name).not.toBeDefined()
+	}) */
 })
