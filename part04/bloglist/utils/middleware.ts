@@ -1,3 +1,4 @@
+import { NextFunction, Request, Response } from 'express'
 import logger from './logger'
 
 const requestLogger = (request, response, next) => {
@@ -24,8 +25,18 @@ const errorHandler = (error, request, response, next) => {
 	next(error)
 }
 
+const tokenExtractor = (req: Request, res: Response, next: NextFunction) => {
+
+	const authorization = req.get('authorization')
+	if (authorization && authorization.startsWith('Bearer ')) {
+		req.token = authorization.replace('Bearer ', '')
+	}
+	next()
+}
+
 export default {
 	requestLogger,
 	unknownEndpoint,
 	errorHandler,
+	tokenExtractor
 } as const

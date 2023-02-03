@@ -6,14 +6,6 @@ import config from '../utils/config'
 
 const router = express.Router()
 
-const getTokenFrom = (request) => {
-	const authorization = request.get('authorization')
-	if (authorization && authorization.startsWith('Bearer ')) {
-		return authorization.replace('Bearer ', '')
-	}
-	return null
-}
-
 router.get('/', async (request, response, next) => {
 	try {
 		const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
@@ -33,8 +25,12 @@ router.get('/:id', async (request, response, next) => {
 })
 
 router.post('/', async (request, response, next) => {
-	const token = getTokenFrom(request)
+	const { token } = request
 	try {
+		if (!token) {
+			return response.status(401).json({ error: 'invalid token' })
+		}
+
 		const decodedToken = jwt.verify(token, config.TOKEN_SECRET) as {username:string, id:string, iat:number}
 		if (!decodedToken.id) {
 			return response.status(401).json({ error: 'invalid token' })
