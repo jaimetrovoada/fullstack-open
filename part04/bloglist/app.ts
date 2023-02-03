@@ -3,6 +3,7 @@ import cors from 'cors'
 import mongoose from 'mongoose'
 import blogsRouter from './controllers/blogsRouter'
 import userRouter from './controllers/usersRouter'
+import loginRouter from './controllers/authRouter'
 import config from './utils/config'
 import logger from './utils/logger'
 import middleware from './utils/middleware'
@@ -28,6 +29,7 @@ app.use(requestLogger)
 
 app.use('/api/blogs', blogsRouter)
 app.use('/api/users', userRouter)
+app.use('/api/login', loginRouter)
 
 app.use(unknownEndpoint)
 app.use(errorHandler)

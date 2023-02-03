@@ -35,3 +35,16 @@ Content-Type: application/json
     "url": "https://sanemax.com/blog/birds-no-real",
     "likes": 50
 }
+
+###
+
+
+POST http://localhost:3001/api/login/ HTTP/1.1
+Content-Type: application/json
+
+{
+	"name": "Monkey D. Luffy",
+	"username": "luffy",
+    "password": "thepirateking"
+
+}

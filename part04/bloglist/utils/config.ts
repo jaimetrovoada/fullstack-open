@@ -7,4 +7,6 @@ const MONGODB_URI =
 
 const PORT = process.env.PORT
 
-export default { MONGODB_URI, PORT } as const
+const TOKEN_SECRET = process.env.TOKEN_SECRET
+
+export default { MONGODB_URI, PORT, TOKEN_SECRET } as const
