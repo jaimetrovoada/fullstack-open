@@ -1,11 +1,12 @@
 import express from 'express'
 import Blog from '../models/blog'
+import User from '../models/user'
 
 const router = express.Router()
 
 router.get('/', async (request, response, next) => {
 	try {
-		const blogs = await Blog.find({})
+		const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
 		response.json(blogs)
 	} catch (exception) {
 		next(exception)
@@ -26,10 +27,16 @@ router.post('/', async (request, response, next) => {
 		if (!request.body.url || !request.body.title) {
 			return response.status(400).end()
 		}
-		const newBlog = request.body.likes ? request.body : { ...request.body, likes: 0 }
-		const blog = new Blog(newBlog)
+		const user = await User.findOne()
 
+		const newBlog = request.body.likes ? request.body : { ...request.body, likes: 0 }
+		const blog = new Blog({
+			...newBlog,
+			user: user._id
+		})
+		
 		const result = await blog.save()
+		await result.populate('user', { username: 1, name: 1 })
 		response.status(201).json(result)
 	} catch (exception) {
 		next(exception)
