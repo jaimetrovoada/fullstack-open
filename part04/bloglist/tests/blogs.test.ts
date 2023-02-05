@@ -205,3 +205,48 @@ describe('add blogs only with token', () => {
 		expect(res.body.user.name).not.toBeDefined()
 	}) */
 })
+
+describe('blog can only be deleted by creator', () => { 
+	beforeEach(async () => {
+		await User.deleteMany({})
+		await Blog.deleteMany({})
+	
+		const usersObj = initialUsers.map(user => new User(user))
+		const blogsObj = initialBlogs.map(blog => new Blog(blog))
+		
+		const userPromiseArr = usersObj.map(user => user.save())
+		const blogPromiseArr = blogsObj.map(blog => blog.save())
+	
+		await Promise.all(userPromiseArr)
+		await Promise.all(blogPromiseArr)
+	})
+	test('valid user', async () => { 
+		const blogToDel = initialBlogs[0]
+		
+		const user = await User.findOne({ username: 'luffy' })
+		
+		const userForToken = {
+			username: user.username,
+			id: user._id
+		}
+    
+		const token = jwt.sign(userForToken, config.TOKEN_SECRET)
+
+		await api.delete(`/api/blogs/${blogToDel._id}`).set('Authorization', `Bearer ${token}`).expect(204)
+	})
+
+	test('invalid user', async () => { 
+		const blogToDel = initialBlogs[0]
+		
+		const user = await User.findOne({ username: 'zoro' })
+		
+		const userForToken = {
+			username: user.username,
+			id: user._id
+		}
+    
+		const token = jwt.sign(userForToken, config.TOKEN_SECRET)
+
+		await api.delete(`/api/blogs/${blogToDel._id}`).set('Authorization', `Bearer ${token}`).expect(403, { error: 'operation not allowed to the current user' })
+	})
+})

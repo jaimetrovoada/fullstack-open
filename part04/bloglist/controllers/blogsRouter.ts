@@ -1,8 +1,12 @@
-import express from 'express'
+import express, { Request } from 'express'
 import Blog from '../models/blog'
 import User from '../models/user'
 import jwt from 'jsonwebtoken'
 import config from '../utils/config'
+
+interface IRequest extends Request {
+	token: string
+}
 
 const router = express.Router()
 
@@ -24,11 +28,11 @@ router.get('/:id', async (request, response, next) => {
 	}
 })
 
-router.post('/', async (request, response, next) => {
+router.post('/', async (request:IRequest, response, next) => {
 	const { token } = request
 	try {
 		if (!token) {
-			return response.status(401).json({ error: 'invalid token' })
+			return response.status(401).json({ error: 'user not logged in' })
 		}
 
 		const decodedToken = jwt.verify(token, config.TOKEN_SECRET) as {username:string, id:string, iat:number}
@@ -59,10 +63,29 @@ router.post('/', async (request, response, next) => {
 
 router.delete('/:id', async (req, res, next) => {
 	const id = req.params.id
+	const { token } = req
 
 	try {
-		await Blog.findByIdAndDelete(id)
-		res.status(204).end()
+		if (!token) {
+			return res.status(401).json({ error: 'user not logged in' })
+		}
+
+		const decodedToken = jwt.verify(token, config.TOKEN_SECRET) as {username:string, id:string, iat:number}
+		if (!decodedToken.id) {
+			return res.status(401).json({ error: 'invalid token' })
+		}
+		
+		const user = await User.findById(decodedToken.id)
+		const blog = await Blog.findById(id)
+
+		if (blog.user.toString() === user.id) {
+			await blog.delete()
+			res.status(204).end()
+		} else {
+			res.status(403).json({ error: 'operation not allowed to the current user' })
+		}
+		
+		
 	} catch (exception) {
 		next(exception)
 	}

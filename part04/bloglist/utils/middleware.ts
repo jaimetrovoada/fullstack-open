@@ -25,7 +25,10 @@ const errorHandler = (error, request, response, next) => {
 	next(error)
 }
 
-const tokenExtractor = (req: Request, res: Response, next: NextFunction) => {
+interface IRequest extends Request {
+	token: string
+}
+const tokenExtractor = (req: IRequest, res: Response, next: NextFunction) => {
 
 	const authorization = req.get('authorization')
 	if (authorization && authorization.startsWith('Bearer ')) {
