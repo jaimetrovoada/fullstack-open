@@ -10,7 +10,7 @@ import middleware from './utils/middleware'
 
 const app = express()
 
-const { unknownEndpoint, requestLogger, errorHandler, tokenExtractor  } = middleware
+const { unknownEndpoint, requestLogger, errorHandler, tokenExtractor, userExtractor  } = middleware
 const { MONGODB_URI } = config
 logger.info({ MONGODB_URI })
 mongoose
@@ -27,8 +27,9 @@ app.use(express.json())
 
 app.use(requestLogger)
 app.use(tokenExtractor)
+//app.use(userExtractor)
 
-app.use('/api/blogs', blogsRouter)
+app.use('/api/blogs', userExtractor, blogsRouter)
 app.use('/api/users', userRouter)
 app.use('/api/login', loginRouter)
 

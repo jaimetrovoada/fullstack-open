@@ -3,9 +3,17 @@ import Blog from '../models/blog'
 import User from '../models/user'
 import jwt from 'jsonwebtoken'
 import config from '../utils/config'
+import { Document, Types } from 'mongoose'
 
+interface IUser extends Document {
+	username: string;
+	blogs: Types.ObjectId[];
+	name?: string;
+	passwordHash?: string;
+}
 interface IRequest extends Request {
 	token: string
+	user: IUser
 }
 
 const router = express.Router()
@@ -29,22 +37,8 @@ router.get('/:id', async (request, response, next) => {
 })
 
 router.post('/', async (request:IRequest, response, next) => {
-	const { token } = request
+	const { user } = request
 	try {
-		if (!token) {
-			return response.status(401).json({ error: 'user not logged in' })
-		}
-
-		const decodedToken = jwt.verify(token, config.TOKEN_SECRET) as {username:string, id:string, iat:number}
-		if (!decodedToken.id) {
-			return response.status(401).json({ error: 'invalid token' })
-		}
-
-		if (!request.body.url || !request.body.title) {
-			return response.status(400).end()
-		}
-		const user = await User.findById(decodedToken.id)
-
 		const newBlog = request.body.likes ? request.body : { ...request.body, likes: 0 }
 		const blog = new Blog({
 			...newBlog,
@@ -63,19 +57,9 @@ router.post('/', async (request:IRequest, response, next) => {
 
 router.delete('/:id', async (req, res, next) => {
 	const id = req.params.id
-	const { token } = req
+	const { user } = req
 
 	try {
-		if (!token) {
-			return res.status(401).json({ error: 'user not logged in' })
-		}
-
-		const decodedToken = jwt.verify(token, config.TOKEN_SECRET) as {username:string, id:string, iat:number}
-		if (!decodedToken.id) {
-			return res.status(401).json({ error: 'invalid token' })
-		}
-		
-		const user = await User.findById(decodedToken.id)
 		const blog = await Blog.findById(id)
 
 		if (blog.user.toString() === user.id) {
