@@ -118,7 +118,6 @@ describe('add blogs with user info',() => {
 	test('check if blogs are added to user', async () => { 
 
 		const res = await api.get('/api/users')
-		// console.log({ blogs: res.body[0].blogs })
 		expect(res.body[0].blogs).toHaveLength(2)
 		expect(res.body[0].blogs[0].id).toBeDefined()
 	})
@@ -131,20 +130,22 @@ describe('add blogs with user info',() => {
 			likes: 20
 		}
 
-		const res = await api.post('/api/blogs').send(newBlog)
+		const user = await User.findOne({ username: 'luffy' })
+		
+		const userForToken = {
+			username: user.username,
+			id: user._id
+		}
+    
+		const token = jwt.sign(userForToken, config.TOKEN_SECRET)
+		
+		const res = await api.post('/api/blogs').set('Authorization', `Bearer ${token}`).send(newBlog)
+
 		expect(res.status).toBe(201)
 		expect(res.body.user).toBeDefined()
 		expect(res.body.user.id).toBeDefined()
 		expect(res.body.user.username).toBeDefined()
 		expect(res.body.user.name).toBeDefined()
-		/* toEqual(
-			{
-				id: '63dca9bbd699ebf539fb2dc8',
-				name: 'Monkey D. Luffy',
-				username: 'luffy',
-			}
-		) */
-			
 	})
     
 })
@@ -185,25 +186,19 @@ describe('add blogs only with token', () => {
 		expect(res.body.user.name).toBeDefined()
 	})
 
-	/* test('invalid token', async () => {
+	test('invalid token', async () => {
 
-		const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imx1ZmZ5IiwiaWQiOiI2M2RjZDYxODEzZTQ3YmE2Yzk1MWIxNTQiLCJpYXQiOjE2NzU0MTc3NDJ9.qyAjeHINaDNH0xP288F-7D-VjozVBq0MZ86mlTIKY-k'
-		
 		const newBlog = {
 			title: 'Finding new islands',
 			author: 'Monkey D. Luffy',
 			url: 'https://strawhatluffy.com/new-islands',
 			likes: 20
 		}
-		const res = await api.post('/api/blogs').set('Authorization', `Bearer ${token}`).send(newBlog)
+		const res = await api.post('/api/blogs').send(newBlog)
 
 
 		expect(res.status).toBe(401)
-		expect(res.body.user).not.toBeDefined()
-		expect(res.body.user.id).not.toBeDefined()
-		expect(res.body.user.username).not.toBeDefined()
-		expect(res.body.user.name).not.toBeDefined()
-	}) */
+	})
 })
 
 describe('blog can only be deleted by creator', () => { 

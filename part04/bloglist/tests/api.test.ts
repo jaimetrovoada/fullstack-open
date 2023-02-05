@@ -1,8 +1,36 @@
 import app from '../app'
 import supertest from 'supertest'
 import Blog from '../models/blog'
+import User from '../models/user'
+import jwt from 'jsonwebtoken'
+import config from '../utils/config'
 
 const api = supertest(app)
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const initialUsers = [
+	{
+		_id: '63dca9bbd699ebf539fb2dc8',
+		name: 'Monkey D. Luffy',
+		username: 'luffy',
+		password: 'thepirateking',
+		blogs: ['5a422a851b54a676234d17f7', '5a422aa71b54a676234d17f8']
+	},
+	{
+		_id: '63dca9bbd699ebf539fb2dc9',
+		name: 'Zoro',
+		username: 'zoro',
+		password: 'threeswordstyle',
+		blogs: ['5a422b3a1b54a676234d17f9','5a422b891b54a676234d17fa']
+	},
+	{
+		_id: '63dca9bbd699ebf539fb2dca',
+		name: 'Vinsmoke Sanji',
+		username: 'sanji',
+		password: 'blackleg',
+		blogs: ['5a422ba71b54a676234d17fb','5a422bc61b54a676234d17fc']
+	}
+]
 
 const initialBlogs = [
 	{
@@ -12,6 +40,7 @@ const initialBlogs = [
 		url: 'https://reactpatterns.com/',
 		likes: 7,
 		__v: 0,
+		user: '63dca9bbd699ebf539fb2dc8'
 	},
 	{
 		_id: '5a422aa71b54a676234d17f8',
@@ -20,6 +49,7 @@ const initialBlogs = [
 		url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
 		likes: 5,
 		__v: 0,
+		user: '63dca9bbd699ebf539fb2dc8'
 	},
 	{
 		_id: '5a422b3a1b54a676234d17f9',
@@ -28,6 +58,7 @@ const initialBlogs = [
 		url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
 		likes: 12,
 		__v: 0,
+		user: '63dca9bbd699ebf539fb2dc9'
 	},
 	{
 		_id: '5a422b891b54a676234d17fa',
@@ -36,6 +67,7 @@ const initialBlogs = [
 		url: 'http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll',
 		likes: 10,
 		__v: 0,
+		user: '63dca9bbd699ebf539fb2dc9'
 	},
 	{
 		_id: '5a422ba71b54a676234d17fb',
@@ -44,6 +76,7 @@ const initialBlogs = [
 		url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html',
 		likes: 0,
 		__v: 0,
+		user: '63dca9bbd699ebf539fb2dca'
 	},
 	{
 		_id: '5a422bc61b54a676234d17fc',
@@ -52,17 +85,25 @@ const initialBlogs = [
 		url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
 		likes: 2,
 		__v: 0,
+		user: '63dca9bbd699ebf539fb2dca'
 	},
+
 ]
 
 const TIMEOUT = 100_000
 
 beforeEach(async () => {
+	await User.deleteMany({})
 	await Blog.deleteMany({})
-	const blogObjs = initialBlogs.map((blog) => new Blog(blog))
-
-	const promiseArr = blogObjs.map((blog) => blog.save())
-	await Promise.all(promiseArr)
+	
+	const usersObj = initialUsers.map(user => new User(user))
+	const blogsObj = initialBlogs.map(blog => new Blog(blog))
+		
+	const userPromiseArr = usersObj.map(user => user.save())
+	const blogPromiseArr = blogsObj.map(blog => blog.save())
+	
+	await Promise.all(userPromiseArr)
+	await Promise.all(blogPromiseArr)
 }, TIMEOUT)
 
 describe('GET /api/blogs', () => {
@@ -93,7 +134,15 @@ describe('POST /api/blogs', () => {
 
 		}
 
-		await api.post('/api/blogs').send(newBlog).expect(201).expect('Content-Type', /application\/json/)
+		const user = await User.findOne({ username: 'luffy' })
+		
+		const userForToken = {
+			username: user.username,
+			id: user._id
+		}
+    
+		const token = jwt.sign(userForToken, config.TOKEN_SECRET)
+		await api.post('/api/blogs').set('Authorization', `Bearer ${token}`).send(newBlog).expect(201).expect('Content-Type', /application\/json/)
 
 		const res = await api.get('/api/blogs')
 
@@ -112,7 +161,15 @@ describe('POST /api/blogs', () => {
 
 		}
 
-		await api.post('/api/blogs').send(newBlog).expect(201).expect('Content-Type', /application\/json/)
+		const user = await User.findOne({ username: 'luffy' })
+		
+		const userForToken = {
+			username: user.username,
+			id: user._id
+		}
+    
+		const token = jwt.sign(userForToken, config.TOKEN_SECRET)
+		await api.post('/api/blogs').set('Authorization', `Bearer ${token}`).send(newBlog).expect(201).expect('Content-Type', /application\/json/)
 
 		const res = await api.get('/api/blogs')
 
@@ -132,7 +189,15 @@ describe('POST /api/blogs', () => {
 
 		}
 
-		await api.post('/api/blogs').send(newBlog).expect(400)
+		const user = await User.findOne({ username: 'luffy' })
+		
+		const userForToken = {
+			username: user.username,
+			id: user._id
+		}
+    
+		const token = jwt.sign(userForToken, config.TOKEN_SECRET)
+		await api.post('/api/blogs').set('Authorization', `Bearer ${token}`).send(newBlog).expect(400)
 
 	}, )
 
@@ -145,7 +210,15 @@ describe('POST /api/blogs', () => {
 
 		}
 
-		await api.post('/api/blogs').send(newBlog).expect(400)
+		const user = await User.findOne({ username: 'luffy' })
+		
+		const userForToken = {
+			username: user.username,
+			id: user._id
+		}
+    
+		const token = jwt.sign(userForToken, config.TOKEN_SECRET)
+		await api.post('/api/blogs').set('Authorization', `Bearer ${token}`).send(newBlog).expect(400)
 
 	}, )
 })
@@ -154,7 +227,15 @@ describe('DELETE blog', () => {
 	test('delete 2nd note', async () => { 
 		const blogToDel = initialBlogs[1]
 
-		await api.delete(`/api/blogs/${blogToDel._id}`).expect(204)
+		const user = await User.findOne({ username: 'luffy' })
+		
+		const userForToken = {
+			username: user.username,
+			id: user._id
+		}
+    
+		const token = jwt.sign(userForToken, config.TOKEN_SECRET)
+		await api.delete(`/api/blogs/${blogToDel._id}`).set('Authorization', `Bearer ${token}`).expect(204)
 
 		const res = await api.get('/api/blogs')
 

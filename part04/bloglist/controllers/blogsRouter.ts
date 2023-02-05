@@ -1,8 +1,6 @@
 import express, { Request } from 'express'
 import Blog from '../models/blog'
-import User from '../models/user'
-import jwt from 'jsonwebtoken'
-import config from '../utils/config'
+import middleware from '../utils/middleware'
 import { Document, Types } from 'mongoose'
 
 interface IUser extends Document {
@@ -17,6 +15,8 @@ interface IRequest extends Request {
 }
 
 const router = express.Router()
+
+const { userExtractor } = middleware
 
 router.get('/', async (request, response, next) => {
 	try {
@@ -36,9 +36,12 @@ router.get('/:id', async (request, response, next) => {
 	}
 })
 
-router.post('/', async (request:IRequest, response, next) => {
+router.post('/', userExtractor, async (request:IRequest, response, next) => {
 	const { user } = request
 	try {
+		if (!request.body.url || !request.body.title) {
+			return response.status(400).end()
+		}
 		const newBlog = request.body.likes ? request.body : { ...request.body, likes: 0 }
 		const blog = new Blog({
 			...newBlog,
@@ -55,7 +58,7 @@ router.post('/', async (request:IRequest, response, next) => {
 
 })
 
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', userExtractor, async (req, res, next) => {
 	const id = req.params.id
 	const { user } = req
 
