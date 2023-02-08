@@ -9,11 +9,22 @@ const App = () => {
   const [password, setPassword] = useState<string>("");
   const [user, setUser] = useState<any>(null);
 
+  const localStorage = window.localStorage
+  const localStorageKey = 'logginDetails'
+
+  useEffect(() => {    
+    const loggedUserJSON = window.localStorage.getItem(localStorageKey)    
+    if (loggedUserJSON) {      
+        const user = JSON.parse(loggedUserJSON)      
+        setUser(user)      
+        // noteService.setToken(user.token)    
+        }  
+  }, [])
+
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
   }, []);
 
-  console.log("hello???");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -23,12 +34,20 @@ const App = () => {
       const user = await loginService.login({ username, password });
       console.log({ user });
       setUser(user);
+      localStorage.setItem(localStorageKey, JSON.stringify(user))
       setUsername("");
       setPassword("");
     } catch (error) {
       console.log({ error });
     }
   };
+
+  const handleLogout = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault()
+
+    localStorage.removeItem(localStorageKey)
+    setUser(null)
+  }
 
   if (user === null) {
     return (
@@ -63,6 +82,7 @@ const App = () => {
     <div>
       <h2>blogs</h2>
       <div>{user.username} logged in</div>
+      <button onClick={handleLogout}>log out</button>
       <br />
       {blogs.map((blog: any) => (
         <Blog key={blog.id} blog={blog} />
