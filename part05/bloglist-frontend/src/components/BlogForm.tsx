@@ -1,7 +1,10 @@
 import React, { useState } from 'react'
 import blogService from '../services/blogs'
 
-const BlogForm = ({setBlogs}: {setBlogs: React.Dispatch<any>}) => {
+const BlogForm = ({setBlogs, setMessage}: {setBlogs: React.Dispatch<any>, setMessage: React.Dispatch<React.SetStateAction<{
+    msg: string;
+    type: 'success' | 'error';
+} | null>>}) => {
     const [title, setTitle] = useState<string>('')
     const [author, setAuthor] = useState<string>('')
     const [url, setUrl] = useState<string>('')
@@ -12,9 +15,17 @@ const BlogForm = ({setBlogs}: {setBlogs: React.Dispatch<any>}) => {
         try {
            const newBlog = await blogService.addNewBlog({title, author, url})
            setBlogs((prev: any[]) => prev.concat(newBlog))
+      setMessage({type:'success', msg:`a new blog: ${newBlog.title} by ${newBlog.author} added`})     
+            setTimeout(() => {        
+                setMessage(null)
+            }, 5000)    
 
         } catch (err) {
             console.log({err})
+      setMessage({type:'error', msg:'adding new blog failed'})     
+            setTimeout(() => {        
+                setMessage(null)
+            }, 5000)    
         }
     }
   return (
