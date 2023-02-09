@@ -14,6 +14,10 @@ const Blog = ({ blog, likeBlog, deleteBlog  }: { blog: any, likeBlog: (...args: 
   }
 
   const blogItemBodyStyles = isVisible ? { display: 'block' } : { display: 'none' }
+  const loginDetails = window.localStorage.getItem('logginDetails')
+  const user = loginDetails ? JSON.parse(loginDetails) : null
+
+  const isCreator = blog.user.username === user.username
 
   return (
     <div className='blogItem'>
@@ -30,7 +34,7 @@ const Blog = ({ blog, likeBlog, deleteBlog  }: { blog: any, likeBlog: (...args: 
           <button className='blogItem--like' onClick={() => likeBlog(blog)}>like</button>
         </p>
         <p>{blog.user.name}</p>
-        <button className='blogItem--delete' onClick={() => deleteBlog(blog)}>delete</button>
+        {isCreator ? <button className='blogItem--delete' onClick={() => deleteBlog(blog)}>delete</button> : null}
       </div>
     </div>
 

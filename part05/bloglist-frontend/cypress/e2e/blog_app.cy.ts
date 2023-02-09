@@ -51,7 +51,18 @@ describe('blog app', () => {
       cy.get('.blogItem--button').click()
       cy.contains('delete')
       cy.get('.blogItem--delete').click()
-      cy.should('not.contain', 'Hello World Matti Luukkainen')
+      cy.get('.blogSection').should('not.contain', 'Hello World Matti Luukkainen')
+    })
+
+    it('only the creator can see delete button', function () {
+      const user = { name: 'Chopper', username: 'chopper', password: 'reindeer' }
+      cy.request('POST', 'http://localhost:3001/api/users/', user)
+
+      cy.get('.logout-btn').click()
+      cy.login({ username: 'chopper', password: 'reindeer' })
+
+      cy.get('.blogItem--button').click()
+      cy.get('.blogItem').should('not.contain', 'delete')
     })
   })
 

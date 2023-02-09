@@ -159,13 +159,15 @@ const App = () => {
       <Notification message={message}/>
       <h2>blogs</h2>
       <div>{user.username} logged in</div>
-      <button onClick={handleLogout}>log out</button>
+      <button className='logout-btn' onClick={handleLogout}>log out</button>
       <br />
       <BlogForm createNewBlog={createNewBlog} />
       <br />
-      {blogs.sort((a, b) => b.likes - a.likes).map((blog: any) => (
-        <Blog key={blog.id} blog={blog} deleteBlog={deleteBlog} likeBlog={likeBlog} />
-      ))}
+      <div className='blogSection'>
+        {blogs.sort((a, b) => b.likes - a.likes).map((blog: any) => (
+          <Blog key={blog.id} blog={blog} deleteBlog={deleteBlog} likeBlog={likeBlog} />
+        ))}
+      </div>
     </div>
   )
 }
