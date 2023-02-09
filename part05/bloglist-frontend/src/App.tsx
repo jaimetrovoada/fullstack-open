@@ -79,9 +79,8 @@ const App = () => {
   }, [])
 
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log({ username, password })
 
     try {
       const user = await loginService.login({ username, password })
@@ -105,12 +104,32 @@ const App = () => {
     setUser(null)
   }
 
+  const createNewBlog = async (e: React.FormEvent<HTMLFormElement>, title:string, author:string, url: string) => {
+    e.preventDefault()
+
+    try {
+      const newBlog = await blogService.addNewBlog({ title, author, url })
+      setBlogs((prev: any[]) => prev.concat(newBlog))
+      setMessage({ type:'success', msg:`a new blog: ${newBlog.title} by ${newBlog.author} added` })
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
+
+    } catch (err) {
+      console.log({ err })
+      setMessage({ type:'error', msg:'adding new blog failed' })
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
+    }
+  }
+
   if (user === null) {
     return (
       <div>
         <Notification message={message}/>
         <h2>Log in to application</h2>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleLogin}>
           <div>
             username{' '}
             <input
@@ -142,7 +161,7 @@ const App = () => {
       <div>{user.username} logged in</div>
       <button onClick={handleLogout}>log out</button>
       <br />
-      <BlogForm setBlogs={setBlogs} setMessage={setMessage} />
+      <BlogForm createNewBlog={createNewBlog} />
       <br />
       {blogs.sort((a, b) => b.likes - a.likes).map((blog: any) => (
         <Blog key={blog.id} blog={blog} deleteBlog={deleteBlog} likeBlog={likeBlog} />

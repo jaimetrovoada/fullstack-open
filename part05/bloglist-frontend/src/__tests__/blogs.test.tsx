@@ -3,6 +3,7 @@ import '@testing-library/jest-dom'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Blog from '../components/Blog'
+import BlogForm from '../components/BlogForm'
 
 const blogs= [
   {
@@ -103,7 +104,7 @@ const blogs= [
   }
 ]
 
-describe('shown content', () => {
+describe('blog section - shown content', () => {
   test('only blog name and author is shown if body is hidden', () => {
 
 
@@ -123,22 +124,50 @@ describe('shown content', () => {
 
     const blogBody = container.querySelector('.blogItem--body')
 
-    const showBtn = container?.querySelector('.blogItem--button')
+    const showBtn = container?.querySelector('.blogItem--button') as Element
 
     const user = userEvent.setup()
-    await user.click(showBtn as Element)
+    await user.click(showBtn)
     expect(blogBody).toHaveStyle('display: block')
   })
 
   test('url and likes only show after click', async () => {
 
-    const mockHandler = jest.fn()
-    const { container } = render(<Blog blog={blogs[0]} deleteBlog={jest.fn()} likeBlog={mockHandler} />)
+    const likeBlog = jest.fn()
+    const { container } = render(<Blog blog={blogs[0]} deleteBlog={jest.fn()} likeBlog={likeBlog} />)
 
-    const likeBtn = container?.querySelector('.blogItem--like')
+    const likeBtn = container?.querySelector('.blogItem--like') as Element
 
     const user = userEvent.setup()
-    await user.dblClick(likeBtn as Element)
-    expect(mockHandler.mock.calls).toHaveLength(2)
+    await user.dblClick(likeBtn)
+    expect(likeBlog.mock.calls).toHaveLength(2)
+  })
+})
+
+describe('blog form', () => {
+  test('form is shown', async () => {
+    const createNewBlog = jest.fn().mockImplementation((e) => e.preventDefault())
+    const { container } = render(<BlogForm createNewBlog={createNewBlog} />)
+
+    const showFormBtn = container.querySelector('.showFormBtn') as Element
+    const user = userEvent.setup()
+    await user.click(showFormBtn)
+
+    const titleInput = container.querySelector('#title') as Element
+    await user.type(titleInput, 'test is testing')
+
+    const authorInput = container.querySelector('#author') as Element
+    await user.type(authorInput, 'test user')
+
+    const urlInput = container.querySelector('#url') as Element
+    await user.type(urlInput, 'https://testing.com/this-is-a-test')
+
+    const submitFormBtn = container.querySelector('.submitFormBtn') as Element
+    await user.click(submitFormBtn)
+
+    expect(createNewBlog.mock.calls).toHaveLength(1)
+    expect(createNewBlog.mock.calls[0]).toContain('test is testing')
+    expect(createNewBlog.mock.calls[0]).toContain('test user')
+    expect(createNewBlog.mock.calls[0]).toContain('https://testing.com/this-is-a-test')
   })
 })
