@@ -34,6 +34,26 @@ const Blog = ({ blog, setMessage, setBlogs }: { blog: any, setBlogs: React.Dispa
       setMessage({type: 'error', msg: 'like post failed'})
     }
   }
+
+  const deleteBlog = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault()
+
+    try {
+      window.alert(`remove blog ${blog.title} by ${blog.author}?`)
+      await blogService.deleteBlog(blog.id)
+      setMessage({ type: 'success', msg: `deleted ${blog.title}` })
+
+      setBlogs((prev: any[]) => {
+       const deletedBlog = prev.find(item => item.id === blog.id)
+       prev = prev.filter(blog => blog !== deletedBlog)
+        return prev
+      })
+    } catch (err) {
+      console.log({err})
+      setMessage({type: 'error', msg: 'delete blog failed'})
+    }
+  }
+
   return (
     <div className='blogItem'>
       <div className="blogItem--header">
@@ -49,6 +69,7 @@ const Blog = ({ blog, setMessage, setBlogs }: { blog: any, setBlogs: React.Dispa
           <button onClick={likePost}>like</button>
         </p>
         <p>{blog.user.name}</p>
+      <button onClick={deleteBlog}>delete</button>
       </div>
     </div>
 
