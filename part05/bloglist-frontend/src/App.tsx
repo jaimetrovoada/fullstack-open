@@ -67,6 +67,7 @@ const App = () => {
     setUser(null)
   }
 
+  console.log({blogs})
   if (user === null) {
     return (
       <div>

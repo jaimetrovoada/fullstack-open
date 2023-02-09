@@ -20,14 +20,14 @@ const Blog = ({ blog }: { blog: any }) => {
         <button onClick={toggleBody}>{isVisible ?'hide' : 'view'}</button>
       </div>
       <div className="blogItem--body" ref={blogItemBody}>
-        <p>
+        <a href={blog.url} target="_blank" rel="noreferrer">
           {blog.url}
-        </p>
+        </a>
         <p>
           likes {blog.likes}
           <button>like</button>
         </p>
-        <p>{blog.author}</p>
+        <p>{blog.user.name}</p>
       </div>
     </div>
 
