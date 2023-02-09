@@ -32,12 +32,19 @@ describe('blog app', () => {
   describe('When logged in', function() {
     beforeEach(function() {
       cy.login({ username: 'mluukkai', password: 'salainen' })
+      cy.createBlog({ title: 'Hello World', author: 'Matti Luukkainen', url: 'http://matti.com/hello-world' })
     })
 
     it('A blog can be created', function() {
-      cy.createBlog({ title: 'Hello World', author: 'Matti Luukkainen', url: 'http://matti.com/hello-world' })
 
       cy.contains('Hello World Matti Luukkainen')
+    })
+
+    it('can like a blog', function () {
+      cy.get('.blogItem--button').click()
+      cy.contains('likes 0')
+      cy.get('.blogItem--like').click()
+      cy.contains('likes 1')
     })
   })
 
