@@ -64,7 +64,22 @@ describe('blog app', () => {
       cy.get('.blogItem--button').click()
       cy.get('.blogItem').should('not.contain', 'delete')
     })
+
+    it('sorted by like count', function () {
+      cy.createBlog({ title: 'Video Games', author: 'Matti Luukkainen', url: 'http://matti.com/video-games', likes: 7 })
+      cy.createBlog({ title: 'Favorite Dinner Spots', author: 'Matti Luukkainen', url: 'http://matti.com/dinner-spots', likes: 10 })
+      cy.createBlog({ title: 'Cats', author: 'Matti Luukkainen', url: 'http://matti.com/cats', likes: 5 })
+      cy.createBlog({ title: 'Music', author: 'Matti Luukkainen', url: 'http://matti.com/music', likes: 6 })
+
+      cy.get('.blogItem').eq(0).should('contain', 'Favorite Dinner Spots')
+      cy.get('.blogItem').eq(1).should('contain', 'Video Games')
+      cy.get('.blogItem').eq(2).should('contain', 'Music')
+      cy.get('.blogItem').eq(3).should('contain', 'Cats')
+      cy.get('.blogItem').eq(4).should('contain', 'Hello World')
+
+    })
   })
+
 
 
 })
