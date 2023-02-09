@@ -13,19 +13,21 @@ const Blog = ({ blog, likeBlog, deleteBlog  }: { blog: any, likeBlog: (...args: 
     setIsVisible(prev => !prev)
   }
 
+  const blogItemBodyStyles = isVisible ? { display: 'block' } : { display: 'none' }
+
   return (
     <div className='blogItem'>
       <div className="blogItem--header">
         {blog.title} {blog.author}
-        <button onClick={toggleBody}>{isVisible ?'hide' : 'view'}</button>
+        <button className='blogItem--button' onClick={toggleBody}>{isVisible ?'hide' : 'view'}</button>
       </div>
-      <div className="blogItem--body" ref={blogItemBody}>
+      <div style={blogItemBodyStyles} className='blogItem--body' ref={blogItemBody}>
         <a href={blog.url} target="_blank" rel="noreferrer">
           {blog.url}
         </a>
         <p>
           likes {blog.likes}
-          <button onClick={() => likeBlog(blog)}>like</button>
+          <button className='blogItem--like' onClick={() => likeBlog(blog)}>like</button>
         </p>
         <p>{blog.user.name}</p>
         <button onClick={() => deleteBlog(blog)}>delete</button>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import '@testing-library/jest-dom'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import Blog from '../components/Blog'
 
 const blogs= [
@@ -112,7 +113,32 @@ describe('shown content', () => {
     const blogBody = container.querySelector('.blogItem--body')
 
     expect(element).toBeDefined()
-    expect(blogBody).not.toHaveClass('show')
+    expect(blogBody).toHaveStyle('display: none')
 
+  })
+
+  test('url and likes only show after click', async () => {
+
+    const { container } = render(<Blog blog={blogs[0]} deleteBlog={jest.fn()} likeBlog={jest.fn()} />)
+
+    const blogBody = container.querySelector('.blogItem--body')
+
+    const showBtn = container?.querySelector('.blogItem--button')
+
+    const user = userEvent.setup()
+    await user.click(showBtn as Element)
+    expect(blogBody).toHaveStyle('display: block')
+  })
+
+  test('url and likes only show after click', async () => {
+
+    const mockHandler = jest.fn()
+    const { container } = render(<Blog blog={blogs[0]} deleteBlog={jest.fn()} likeBlog={mockHandler} />)
+
+    const likeBtn = container?.querySelector('.blogItem--like')
+
+    const user = userEvent.setup()
+    await user.dblClick(likeBtn as Element)
+    expect(mockHandler.mock.calls).toHaveLength(2)
   })
 })
