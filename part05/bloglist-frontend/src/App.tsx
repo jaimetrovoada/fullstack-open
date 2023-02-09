@@ -7,7 +7,7 @@ import Notification from "./components/Notification";
 import './index.css'
 
 const App = () => {
-  const [blogs, setBlogs] = useState<any>([]);
+  const [blogs, setBlogs] = useState<any[]>([]);
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [user, setUser] = useState<any>(null);
@@ -106,7 +106,7 @@ const App = () => {
       <br />
       <BlogForm setBlogs={setBlogs} setMessage={setMessage} />
       <br />
-      {blogs.map((blog: any) => (
+      {blogs.sort((a, b) => b.likes - a.likes).map((blog: any) => (
         <Blog key={blog.id} blog={blog} setBlogs={setBlogs} setMessage={setMessage} />
       ))}
     </div>
