@@ -1,5 +1,6 @@
-import React, { useRef, useState } from "react";
-import blogService from "../services/blogs";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useRef, useState } from 'react'
+import blogService from '../services/blogs'
 
 const Blog = ({ blog, setMessage, setBlogs }: { blog: any, setBlogs: React.Dispatch<any>, setMessage: React.Dispatch<React.SetStateAction<{
     msg: string;
@@ -21,7 +22,7 @@ const Blog = ({ blog, setMessage, setBlogs }: { blog: any, setBlogs: React.Dispa
 
     try {
 
-     const res = await blogService.likeBlog(blog)
+      const res = await blogService.likeBlog(blog)
       setMessage({ type: 'success', msg: `liked ${blog.title}` })
 
       setBlogs((prev: any[]) => {
@@ -30,8 +31,8 @@ const Blog = ({ blog, setMessage, setBlogs }: { blog: any, setBlogs: React.Dispa
       }
       )
     } catch (err) {
-      console.log({err})
-      setMessage({type: 'error', msg: 'like post failed'})
+      console.log({ err })
+      setMessage({ type: 'error', msg: 'like post failed' })
     }
   }
 
@@ -44,13 +45,13 @@ const Blog = ({ blog, setMessage, setBlogs }: { blog: any, setBlogs: React.Dispa
       setMessage({ type: 'success', msg: `deleted ${blog.title}` })
 
       setBlogs((prev: any[]) => {
-       const deletedBlog = prev.find(item => item.id === blog.id)
-       prev = prev.filter(blog => blog !== deletedBlog)
+        const deletedBlog = prev.find(item => item.id === blog.id)
+        prev = prev.filter(blog => blog !== deletedBlog)
         return prev
       })
     } catch (err) {
-      console.log({err})
-      setMessage({type: 'error', msg: 'delete blog failed'})
+      console.log({ err })
+      setMessage({ type: 'error', msg: 'delete blog failed' })
     }
   }
 
@@ -69,11 +70,11 @@ const Blog = ({ blog, setMessage, setBlogs }: { blog: any, setBlogs: React.Dispa
           <button onClick={likePost}>like</button>
         </p>
         <p>{blog.user.name}</p>
-      <button onClick={deleteBlog}>delete</button>
+        <button onClick={deleteBlog}>delete</button>
       </div>
     </div>
 
   )
-};
+}
 
-export default Blog;
+export default Blog
