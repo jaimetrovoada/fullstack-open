@@ -33,7 +33,7 @@ const BlogForm = ({setBlogs, setMessage}: {setBlogs: React.Dispatch<any>, setMes
 
     if (!isVisible) {
         return <>
-        <button onClick={() => setIsVisible(true)}>new note</button></>
+        <button onClick={() => setIsVisible(true)}>create new blog</button></>
     }
   return (
     <>
