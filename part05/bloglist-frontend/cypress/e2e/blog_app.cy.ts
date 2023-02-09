@@ -1,6 +1,6 @@
 describe('blog app', () => {
   beforeEach(function() {
-    cy.request('POST', 'http://localhost:3000/api/testing/reset')
+    cy.request('POST', 'http://localhost:3001/api/testing/reset')
     const user = { name: 'Matti Luukkainen', username: 'mluukkai', password: 'salainen' }
     cy.request('POST', 'http://localhost:3001/api/users/', user)
     cy.visit('http://localhost:3000')
@@ -28,4 +28,18 @@ describe('blog app', () => {
       cy.contains('wrong name or password')
     })
   })
+
+  describe('When logged in', function() {
+    beforeEach(function() {
+      cy.login({ username: 'mluukkai', password: 'salainen' })
+    })
+
+    it('A blog can be created', function() {
+      cy.createBlog({ title: 'Hello World', author: 'Matti Luukkainen', url: 'http://matti.com/hello-world' })
+
+      cy.contains('Hello World Matti Luukkainen')
+    })
+  })
+
+
 })
