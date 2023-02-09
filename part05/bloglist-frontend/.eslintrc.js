@@ -20,7 +20,7 @@ module.exports = {
     'sourceType': 'module'
   },
   'plugins': [
-    'react', 'jest', '@typescript-eslint'
+    'react', 'jest', '@typescript-eslint', 'jest-dom'
   ],
   'rules': {
     'indent': [

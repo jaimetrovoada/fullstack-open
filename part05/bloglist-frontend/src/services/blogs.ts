@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import axios from 'axios'
+
 const baseUrl = '/api/blogs'
 
 let token:string | null = null

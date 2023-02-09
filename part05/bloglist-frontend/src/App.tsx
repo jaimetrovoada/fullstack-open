@@ -18,16 +18,59 @@ const App = () => {
   const localStorage = window.localStorage
   const localStorageKey = 'logginDetails'
 
+  const sendNotification = ({ type, msg }:{type: 'error' | 'success', msg: string}) => {
+
+    setMessage({ type, msg })
+    setTimeout(() => {
+      setMessage(null)
+    }, 5000)
+  }
+
+  const likeBlog = async (blog: any) => {
+
+    try {
+
+      const res = await blogService.likeBlog(blog)
+      sendNotification({ type: 'success', msg: `liked ${blog.title}` })
+
+      setBlogs((prev: any[]) => {
+        prev.find(blog => blog.id === res.id).likes = res.likes
+        return prev
+      }
+      )
+    } catch (err) {
+      console.log({ err })
+      sendNotification({ type: 'error', msg: 'like post failed' })
+    }
+  }
+
+  const deleteBlog = async ( blog:any) => {
+
+    try {
+      window.alert(`remove blog ${blog.title} by ${blog.author}?`)
+      await blogService.deleteBlog(blog.id)
+      sendNotification({ type: 'success', msg: `deleted ${blog.title}` })
+
+      setBlogs((prev: any[]) => {
+        const deletedBlog = prev.find(item => item.id === blog.id)
+        prev = prev.filter(blog => blog !== deletedBlog)
+        return prev
+      })
+    } catch (err) {
+      console.log({ err })
+      sendNotification({ type: 'error', msg: 'delete blog failed' })
+    }
+  }
+
+
+
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem(localStorageKey)
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
       blogService.setToken(user.token)
-      setMessage({ type:'success', msg:`logged in as ${user.username}` })
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
+      sendNotification({ type:'success', msg:`logged in as ${user.username}` })
     }
   }, [])
 
@@ -48,16 +91,10 @@ const App = () => {
       blogService.setToken(user.token)
       setUsername('')
       setPassword('')
-      setMessage({ type:'success', msg:`logged in as ${user.username}` })
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
+      sendNotification({ type:'success', msg:`logged in as ${user.username}` })
     } catch (error) {
       console.log({ error })
-      setMessage({ type:'error', msg:'wrong name or password' })
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
+      sendNotification({ type:'error', msg:'wrong name or password' })
     }
   }
 
@@ -108,7 +145,7 @@ const App = () => {
       <BlogForm setBlogs={setBlogs} setMessage={setMessage} />
       <br />
       {blogs.sort((a, b) => b.likes - a.likes).map((blog: any) => (
-        <Blog key={blog.id} blog={blog} setBlogs={setBlogs} setMessage={setMessage} />
+        <Blog key={blog.id} blog={blog} deleteBlog={deleteBlog} likeBlog={likeBlog} />
       ))}
     </div>
   )
