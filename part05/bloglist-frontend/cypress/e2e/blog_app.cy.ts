@@ -46,6 +46,13 @@ describe('blog app', () => {
       cy.get('.blogItem--like').click()
       cy.contains('likes 1')
     })
+
+    it('can delete a blog', function () {
+      cy.get('.blogItem--button').click()
+      cy.contains('delete')
+      cy.get('.blogItem--delete').click()
+      cy.should('not.contain', 'Hello World Matti Luukkainen')
+    })
   })
 
 

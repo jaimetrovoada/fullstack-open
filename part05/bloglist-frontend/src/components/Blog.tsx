@@ -30,7 +30,7 @@ const Blog = ({ blog, likeBlog, deleteBlog  }: { blog: any, likeBlog: (...args: 
           <button className='blogItem--like' onClick={() => likeBlog(blog)}>like</button>
         </p>
         <p>{blog.user.name}</p>
-        <button onClick={() => deleteBlog(blog)}>delete</button>
+        <button className='blogItem--delete' onClick={() => deleteBlog(blog)}>delete</button>
       </div>
     </div>
 
