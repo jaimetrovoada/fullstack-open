@@ -67,7 +67,6 @@ const App = () => {
     setUser(null)
   }
 
-  console.log({blogs})
   if (user === null) {
     return (
       <div>
@@ -108,7 +107,7 @@ const App = () => {
       <BlogForm setBlogs={setBlogs} setMessage={setMessage} />
       <br />
       {blogs.map((blog: any) => (
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} setBlogs={setBlogs} setMessage={setMessage} />
       ))}
     </div>
   );
