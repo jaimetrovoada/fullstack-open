@@ -1,4 +1,4 @@
-import { Dispatch, createSlice } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 import anecdotesService from '../services/anecdotes'
 
 export interface Anecdote {
@@ -65,5 +65,12 @@ export const initAnecdotes = () => {
   return async (dispatch: (arg0: { payload: Anecdote[]; type: 'anecdotes/setAnecdotes' }) => void) => {
     const anecdotes = await anecdotesService.getAll()
     dispatch(setAnecdotes(anecdotes))
+  }
+}
+
+export const createAnecdote = (content: string) => {
+  return async (dispatch: (arg0: { payload: Anecdote; type: 'anecdotes/newAnecdote' }) => void) => {
+    const res = await anecdotesService.createAnecdote(content)
+    dispatch(newAnecdote(res))
   }
 }
