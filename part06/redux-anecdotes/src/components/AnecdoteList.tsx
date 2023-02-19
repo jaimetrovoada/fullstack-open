@@ -1,16 +1,23 @@
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { RootState, voteReducer } from '../reducers/anecdoteReducer'
+import { Anecdote, RootState } from '../reducers/anecdoteReducer'
 
 const AnecdoteList = () => {
-  const anecdotes = useSelector<RootState[], {content:string, id:string, votes: number}[]>(state => state.sort((a, b) => b.votes - a.votes))
+  const filter = useSelector<RootState, string>(state => state.filter)
+  console.log({ filter })
+  const anecdotes = useSelector<RootState, Anecdote[]>(state => state.anecdotes.filter(state => {
+    if (filter === 'all') {
+      return state
+    }
+    return state.content.includes(filter)
+  }).sort((a, b) => b.votes - a.votes))
   const dispatch = useDispatch()
 
 
   const vote = (id: string) => {
     console.log('vote', id)
 
-    dispatch(voteReducer(id))
+    dispatch({ type: 'anecdotes/voteAnecdote', payload: { id } } )
   }
 
   return (

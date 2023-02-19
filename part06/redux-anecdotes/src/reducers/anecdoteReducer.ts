@@ -1,4 +1,4 @@
-import { Action } from 'redux'
+import { createSlice } from '@reduxjs/toolkit'
 
 const anecdotesAtStart = [
   'If it hurts, do it more often',
@@ -19,59 +19,49 @@ const asObject = (anecdote: string) => {
   }
 }
 
+export interface Anecdote {
+  content: string,
+  id: string,
+  votes: number
+}
 export interface RootState {
 
-    content: string
-    id: string
-    votes: number
-}
-const initialState: RootState[] = anecdotesAtStart.map(asObject)
-
-enum ActionType {
-  VOTE = 'VOTE',
-  NEW_ANECDOTE = 'NEW_ANECDOTE',
+    anecdotes: Anecdote[]
+    filter: string
 }
 
-interface NewAnecdoteAction extends Action<ActionType.NEW_ANECDOTE> {
-  payload: {
-    content: string;
-  };
-}
-interface Vote extends Action<ActionType.VOTE> {
-  payload: {
-    id: string;
-  };
-}
+const initialState: Anecdote[] = anecdotesAtStart.map(asObject)
+console.log({ initialState })
 
-const reducer = (state = initialState, action: NewAnecdoteAction | Vote) => {
-  console.log('state now: ', state)
-  console.log('action', action)
-
-  switch (action.type) {
-  case ActionType.VOTE:
-    return state = state.map(anecdote =>
-      anecdote.id === action.payload.id ? { ...anecdote, votes: anecdote.votes + 1 } : anecdote
-    )
-  case ActionType.NEW_ANECDOTE:
-    return [...state, asObject(action.payload.content)]
-  default:
-    return state
-  }
-
-}
-
-export const voteReducer = (id: string) => {
-
-  return { type: 'VOTE', payload: { id } }
-}
-
-export const newAnecdoteReducer = (content: string) => {
-  return {
-    type: 'NEW_ANECDOTE',
-    payload: {
-      content
+const anecdoteSlice = createSlice({
+  name: 'anecdotes',
+  initialState,
+  reducers: {
+    voteAnecdote(state, action) {
+      const id = action.payload.id
+      return state.map(anecdote =>
+        anecdote.id === id ? { ...anecdote, votes: anecdote.votes + 1 } : anecdote
+      )
+    },
+    newAnecdote(state, action) {
+      return [...state, asObject(action.payload.content)]
     }
   }
+})
+
+const filterSlice = createSlice({
+  name: 'filter',
+  initialState: 'all',
+  reducers: {
+    setFilter(state, action) {
+      return action.payload.param
+    }
+  }
+})
+
+const reducer = {
+  anecdotes: anecdoteSlice.reducer,
+  filter: filterSlice.reducer,
 }
 
 export default reducer
