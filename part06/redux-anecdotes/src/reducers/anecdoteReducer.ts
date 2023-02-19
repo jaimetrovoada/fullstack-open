@@ -59,7 +59,7 @@ const reducer = {
 }
 
 export default reducer
-export const { setAnecdotes, voteAnecdote, newAnecdote } = anecdoteSlice.actions
+const { setAnecdotes, voteAnecdote, newAnecdote } = anecdoteSlice.actions
 
 export const initAnecdotes = () => {
   return async (dispatch: (arg0: { payload: Anecdote[]; type: 'anecdotes/setAnecdotes' }) => void) => {
@@ -72,5 +72,12 @@ export const createAnecdote = (content: string) => {
   return async (dispatch: (arg0: { payload: Anecdote; type: 'anecdotes/newAnecdote' }) => void) => {
     const res = await anecdotesService.createAnecdote(content)
     dispatch(newAnecdote(res))
+  }
+}
+
+export const vote = (id: string, content:{content:string, votes:number}) => {
+  return async (dispatch: (arg0: { payload: Anecdote; type: 'anecdotes/voteAnecdote' }) => void) => {
+    const res = await anecdotesService.vote(id, content)
+    dispatch(voteAnecdote(res))
   }
 }
