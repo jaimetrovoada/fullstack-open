@@ -8,6 +8,11 @@ const AnecdoteForm = () => {
     e.preventDefault()
 
     dispatch({ type: 'anecdotes/newAnecdote', payload: { content } })
+    dispatch({ type: 'notification/setNotification', payload: { msg: 'new anecdote added' } })
+
+    setTimeout(() => {
+      dispatch({ type: 'notification/setNotification', payload: { msg: null } })
+    }, 5000)
   }
   return (
     <>

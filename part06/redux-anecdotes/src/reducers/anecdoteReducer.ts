@@ -28,6 +28,7 @@ export interface RootState {
 
     anecdotes: Anecdote[]
     filter: string
+    notification: string
 }
 
 const initialState: Anecdote[] = anecdotesAtStart.map(asObject)
@@ -59,9 +60,20 @@ const filterSlice = createSlice({
   }
 })
 
+const notificationSlice = createSlice({
+  name: 'notification',
+  initialState: '',
+  reducers: {
+    setNotification(state, action) {
+      return action.payload.msg
+    }
+  }
+})
+
 const reducer = {
   anecdotes: anecdoteSlice.reducer,
   filter: filterSlice.reducer,
+  notification: notificationSlice.reducer
 }
 
 export default reducer
