@@ -2,6 +2,7 @@
 import React from 'react'
 import { useMutation, useQueryClient } from 'react-query'
 import anecdotesService, { Anecdote } from '../services/anecdotes'
+import { useNotificationDispatch } from '../contexts/NotificationContext'
 
 const AnecdoteForm = () => {
 
@@ -9,10 +10,16 @@ const AnecdoteForm = () => {
 
   const queryClient = useQueryClient()
 
+  const dispatch = useNotificationDispatch()
+
   const newMutation = useMutation(anecdotesService.createAnecdote, {
     onSuccess: (newAnecdote) => {
       const anecdotes = queryClient.getQueryData<Anecdote[]>('anecdotes')
       queryClient.setQueryData('anecdotes', anecdotes?.concat(newAnecdote))
+      dispatch({ type: 'SET_NOTIFICATION', payload: 'New anecdote created!' })
+      setTimeout(() => {
+        dispatch({ type: 'REMOVE_NOTIFICATION', payload:'' })
+      }, 5000)
     }
   })
 
