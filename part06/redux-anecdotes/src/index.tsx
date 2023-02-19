@@ -6,7 +6,6 @@ import { configureStore } from '@reduxjs/toolkit'
 import reducer from './reducers/anecdoteReducer'
 
 const store = configureStore({ reducer })
-console.log({ store: store.getState() })
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <Provider store={store}>

@@ -46,7 +46,7 @@ const notificationSlice = createSlice({
   name: 'notification',
   initialState: '',
   reducers: {
-    setNotification(state, action) {
+    setMessage(state, action) {
       return action.payload.msg
     }
   }
@@ -60,6 +60,7 @@ const reducer = {
 
 export default reducer
 const { setAnecdotes, voteAnecdote, newAnecdote } = anecdoteSlice.actions
+const { setMessage } = notificationSlice.actions
 
 export const initAnecdotes = () => {
   return async (dispatch: (arg0: { payload: Anecdote[]; type: 'anecdotes/setAnecdotes' }) => void) => {
@@ -79,5 +80,14 @@ export const vote = (id: string, content:{content:string, votes:number}) => {
   return async (dispatch: (arg0: { payload: Anecdote; type: 'anecdotes/voteAnecdote' }) => void) => {
     const res = await anecdotesService.vote(id, content)
     dispatch(voteAnecdote(res))
+  }
+}
+
+export const setNotification = (msg: string, timeout: number) => {
+  return (dispatch: (arg0: { payload: string; type: 'notification/setMessage' }) => void) => {
+    dispatch(setMessage({ msg }))
+    setTimeout(() => {
+      dispatch(setMessage({ msg: null }))
+    }, timeout * 1000)
   }
 }
