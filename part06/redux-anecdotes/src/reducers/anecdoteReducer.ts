@@ -1,4 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { Dispatch, createSlice } from '@reduxjs/toolkit'
+import anecdotesService from '../services/anecdotes'
 
 export interface Anecdote {
   content: string,
@@ -59,3 +60,10 @@ const reducer = {
 
 export default reducer
 export const { setAnecdotes, voteAnecdote, newAnecdote } = anecdoteSlice.actions
+
+export const initAnecdotes = () => {
+  return async (dispatch: (arg0: { payload: Anecdote[]; type: 'anecdotes/setAnecdotes' }) => void) => {
+    const anecdotes = await anecdotesService.getAll()
+    dispatch(setAnecdotes(anecdotes))
+  }
+}
