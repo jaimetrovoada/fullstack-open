@@ -19,7 +19,13 @@ const asObject = (anecdote: string) => {
   }
 }
 
-const initialState = anecdotesAtStart.map(asObject)
+export interface RootState {
+
+    content: string
+    id: string
+    votes: number
+}
+const initialState: RootState[] = anecdotesAtStart.map(asObject)
 
 enum ActionType {
   VOTE = 'VOTE',

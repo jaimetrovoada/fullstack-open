@@ -11,10 +11,13 @@ const AnecdoteForm = () => {
     dispatch(newAnecdoteReducer(content))
   }
   return (
-    <form onSubmit={newAnecdote}>
-      <div><input type='text' onChange={({ target }) => setContent(target.value)} /></div>
-      <button type='submit'>create</button>
-    </form>
+    <>
+      <h2>create new</h2>
+      <form onSubmit={newAnecdote}>
+        <div><input type='text' onChange={({ target }) => setContent(target.value)} /></div>
+        <button type='submit'>create</button>
+      </form>
+    </>
   )
 }
 
