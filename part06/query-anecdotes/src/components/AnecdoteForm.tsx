@@ -20,6 +20,13 @@ const AnecdoteForm = () => {
       setTimeout(() => {
         dispatch({ type: 'REMOVE_NOTIFICATION', payload:'' })
       }, 5000)
+    },
+    onError: (error) => {
+      console.log({ error })
+      dispatch({ type: 'SET_NOTIFICATION', payload: (error as any)?.response.data.error })
+      setTimeout(() => {
+        dispatch({ type: 'REMOVE_NOTIFICATION', payload:'' })
+      }, 5000)
     }
   })
 
