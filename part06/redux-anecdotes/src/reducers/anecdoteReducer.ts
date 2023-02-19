@@ -1,3 +1,4 @@
+import { Action } from 'redux'
 
 const anecdotesAtStart = [
   'If it hurts, do it more often',
@@ -20,15 +21,33 @@ const asObject = (anecdote: string) => {
 
 const initialState = anecdotesAtStart.map(asObject)
 
-const reducer = (state = initialState, action: {type: string, payload:{id: string}}) => {
+enum ActionType {
+  VOTE = 'VOTE',
+  NEW_ANECDOTE = 'NEW_ANECDOTE',
+}
+
+interface NewAnecdoteAction extends Action<ActionType.NEW_ANECDOTE> {
+  payload: {
+    content: string;
+  };
+}
+interface Vote extends Action<ActionType.VOTE> {
+  payload: {
+    id: string;
+  };
+}
+
+const reducer = (state = initialState, action: NewAnecdoteAction | Vote) => {
   console.log('state now: ', state)
   console.log('action', action)
 
   switch (action.type) {
-  case 'VOTE':
+  case ActionType.VOTE:
     return state = state.map(anecdote =>
       anecdote.id === action.payload.id ? { ...anecdote, votes: anecdote.votes + 1 } : anecdote
     )
+  case ActionType.NEW_ANECDOTE:
+    return [...state, asObject(action.payload.content)]
   default:
     return state
   }
@@ -38,6 +57,15 @@ const reducer = (state = initialState, action: {type: string, payload:{id: strin
 export const voteReducer = (id: string) => {
 
   return { type: 'VOTE', payload: { id } }
+}
+
+export const newAnecdoteReducer = (content: string) => {
+  return {
+    type: 'NEW_ANECDOTE',
+    payload: {
+      content
+    }
+  }
 }
 
 export default reducer
