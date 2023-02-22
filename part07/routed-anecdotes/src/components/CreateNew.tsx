@@ -1,24 +1,26 @@
 import React, { useState } from 'react'
 import { Anecdote } from './List'
 import { useNavigate } from 'react-router-dom'
+import { useField } from '../hooks'
 
 interface Props {
   addNew: (anecdote: Anecdote) => void
 }
 
 const CreateNew: React.FC<Props> = ({ addNew }) => {
-  const [content, setContent] = useState('')
-  const [author, setAuthor] = useState('')
-  const [info, setInfo] = useState('')
+
+  const contentField = useField('text')
+  const authorField = useField('text')
+  const infoField = useField('text')
 
   const navigate = useNavigate()
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     addNew({
-      content,
-      author,
-      info,
+      content: contentField.value,
+      author: authorField.value,
+      info: infoField.value,
       votes: 0,
       id: 0
     })
@@ -32,15 +34,15 @@ const CreateNew: React.FC<Props> = ({ addNew }) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input name='content' value={content} onChange={(e) => setContent(e.target.value)} />
+          <input name='content' {...contentField} />
         </div>
         <div>
           author
-          <input name='author' value={author} onChange={(e) => setAuthor(e.target.value)} />
+          <input name='author' {...authorField} />
         </div>
         <div>
           url for more info
-          <input name='info' value={info} onChange={(e) => setInfo(e.target.value)} />
+          <input name='info' {...infoField} />
         </div>
         <button>create</button>
       </form>
