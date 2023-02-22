@@ -6,11 +6,19 @@ import loginService from "./services/login";
 import BlogForm from "./components/BlogForm";
 import Notification from "./components/Notification";
 import "./index.css";
-import { INotification, RootState, setNotification } from "./reducers";
+import {
+  IBlog,
+  INotification,
+  RootState,
+  setBlogs,
+  setNotification,
+  removeBlog,
+  likeBlog,
+  initBlogs,
+} from "./reducers";
 import { useDispatch, useSelector } from "react-redux";
 
 const App = () => {
-  const [blogs, setBlogs] = useState<any[]>([]);
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [user, setUser] = useState<any>(null);
@@ -21,7 +29,7 @@ const App = () => {
     (state) => state.notification
   );
 
-  console.log({ notification });
+  const blogs = useSelector<RootState, IBlog[]>((state) => state.blogs);
 
   const localStorage = window.localStorage;
   const localStorageKey = "logginDetails";
@@ -39,15 +47,12 @@ const App = () => {
     }, 5000);
   };
 
-  const likeBlog = async (blog: any) => {
+  const voteBlog = async (blog: IBlog) => {
     try {
       const res = await blogService.likeBlog(blog);
       sendNotification({ type: "success", msg: `liked ${blog.title}` });
 
-      setBlogs((prev: any[]) => {
-        prev.find((blog) => blog.id === res.id).likes = res.likes;
-        return prev;
-      });
+      dispatch(likeBlog(res.id));
     } catch (err) {
       console.log({ err });
       sendNotification({ type: "error", msg: "like post failed" });
@@ -60,11 +65,12 @@ const App = () => {
       await blogService.deleteBlog(blog.id);
       sendNotification({ type: "success", msg: `deleted ${blog.title}` });
 
-      setBlogs((prev: any[]) => {
+      dispatch(removeBlog(blog.id));
+      /*  setBlogs((prev: any[]) => {
         const deletedBlog = prev.find((item) => item.id === blog.id);
         prev = prev.filter((blog) => blog !== deletedBlog);
         return prev;
-      });
+      }); */
     } catch (err) {
       console.log({ err });
       sendNotification({ type: "error", msg: "delete blog failed" });
@@ -85,8 +91,15 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
+    // console.log("setBlogs");
+    // blogService.getAll().then((blogs) => {
+    //   dispatch(setBlogs(blogs));
+    //   console.log({ blogs });
+    // });
+    dispatch<any>(initBlogs());
   }, []);
+
+  console.log({ blogs });
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -126,7 +139,7 @@ const App = () => {
 
     try {
       const newBlog = await blogService.addNewBlog({ title, author, url });
-      setBlogs((prev: any[]) => prev.concat(newBlog));
+      dispatch(newBlog(newBlog));
       sendNotification({
         type: "success",
         msg: `a new blog: ${newBlog.title} by ${newBlog.author} added`,
@@ -182,13 +195,13 @@ const App = () => {
       <br />
       <div className="blogSection">
         {blogs
-          .sort((a, b) => b.likes - a.likes)
+          // .sort((a, b) => b.likes - a.likes)
           .map((blog: any) => (
             <Blog
               key={blog.id}
               blog={blog}
               deleteBlog={deleteBlog}
-              likeBlog={likeBlog}
+              likeBlog={voteBlog}
             />
           ))}
       </div>

@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useRef, useState } from "react";
+import { IBlog } from "../reducers";
 
 const Blog = ({
   blog,
   likeBlog,
   deleteBlog,
 }: {
-  blog: any;
+  blog: IBlog;
   likeBlog: (...args: any[]) => void;
   deleteBlog: (...args: any[]) => void;
 }) => {
