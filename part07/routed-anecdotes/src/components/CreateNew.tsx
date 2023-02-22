@@ -1,19 +1,29 @@
 import React, { useState } from 'react'
+import { Anecdote } from './List'
+import { useNavigate } from 'react-router-dom'
 
-const CreateNew = (props: any) => {
+interface Props {
+  addNew: (anecdote: Anecdote) => void
+}
+
+const CreateNew: React.FC<Props> = ({ addNew }) => {
   const [content, setContent] = useState('')
   const [author, setAuthor] = useState('')
   const [info, setInfo] = useState('')
 
+  const navigate = useNavigate()
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    props.addNew({
+    addNew({
       content,
       author,
       info,
-      votes: 0
+      votes: 0,
+      id: 0
     })
+
+    navigate('/')
   }
 
   return (

@@ -6,6 +6,7 @@ import AnecdoteList, { Anecdote } from './components/List'
 import Menu from './components/Menu'
 import { Route, Routes, useMatch } from 'react-router-dom'
 import AnecdoteView from './components/AnecdoteView'
+import Notification from './components/Notification'
 
 
 const App = () => {
@@ -33,6 +34,10 @@ const App = () => {
   const addNew = (anecdote: Anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000)
     setAnecdotes(anecdotes.concat(anecdote))
+    setNotification(`a new anecdote ${anecdote.content} created!`)
+    setTimeout(() => {
+      setNotification('')
+    }, 5000)
   }
 
   const anecdoteById = (id: Anecdote['id']) =>
@@ -55,6 +60,7 @@ const App = () => {
     <div>
       <h1>Software anecdotes</h1>
       <Menu />
+      <Notification msg={notification} />
       <Routes>
         <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
         <Route path="/about" element={<About />} />
