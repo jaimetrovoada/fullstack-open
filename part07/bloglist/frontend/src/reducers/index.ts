@@ -6,7 +6,7 @@ export interface INotification {
   type: "error" | "success";
 }
 
-export interface IUser {
+export interface IBlogUser {
   name: string;
   username: string;
   id: string;
@@ -17,11 +17,18 @@ export interface IBlog {
   author: string;
   url: string;
   likes: number;
-  user: IUser;
+  user: IBlogUser;
+}
+
+export interface IUser {
+  name: string;
+  username: string;
+  token: string;
 }
 export interface RootState {
   notification: INotification;
   blogs: IBlog[];
+  user: IUser;
 }
 
 const notificationSlice = createSlice({
@@ -58,14 +65,26 @@ const blogsSlice = createSlice({
   },
 });
 
+const userSlice = createSlice({
+  name: "user",
+  initialState: {} as IUser,
+  reducers: {
+    setUser(state, action: { payload: IUser }) {
+      return action.payload;
+    },
+  },
+});
+
 const reducer = {
   notification: notificationSlice.reducer,
   blogs: blogsSlice.reducer,
+  user: userSlice.reducer,
 };
 export default reducer;
 
 export const { setNotification } = notificationSlice.actions;
 export const { setBlogs, newBlog, removeBlog, likeBlog } = blogsSlice.actions;
+export const { setUser } = userSlice.actions;
 
 export const initBlogs = () => {
   return async (

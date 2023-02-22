@@ -15,13 +15,15 @@ import {
   removeBlog,
   likeBlog,
   initBlogs,
+  setUser,
+  IUser,
 } from "./reducers";
 import { useDispatch, useSelector } from "react-redux";
 
 const App = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [user, setUser] = useState<any>(null);
+  // const [user, setUser] = useState<any>(null);
 
   const dispatch = useDispatch();
 
@@ -30,6 +32,8 @@ const App = () => {
   );
 
   const blogs = useSelector<RootState, IBlog[]>((state) => state.blogs);
+
+  const user = useSelector<RootState, IUser>((state) => state.user);
 
   const localStorage = window.localStorage;
   const localStorageKey = "logginDetails";
@@ -66,11 +70,6 @@ const App = () => {
       sendNotification({ type: "success", msg: `deleted ${blog.title}` });
 
       dispatch(removeBlog(blog.id));
-      /*  setBlogs((prev: any[]) => {
-        const deletedBlog = prev.find((item) => item.id === blog.id);
-        prev = prev.filter((blog) => blog !== deletedBlog);
-        return prev;
-      }); */
     } catch (err) {
       console.log({ err });
       sendNotification({ type: "error", msg: "delete blog failed" });
@@ -81,7 +80,7 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem(localStorageKey);
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
-      setUser(user);
+      dispatch(setUser(user));
       blogService.setToken(user.token);
       sendNotification({
         type: "success",
@@ -91,23 +90,15 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    // console.log("setBlogs");
-    // blogService.getAll().then((blogs) => {
-    //   dispatch(setBlogs(blogs));
-    //   console.log({ blogs });
-    // });
     dispatch<any>(initBlogs());
   }, []);
-
-  console.log({ blogs });
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
       const user = await loginService.login({ username, password });
-      console.log({ user });
-      setUser(user);
+      dispatch(setUser(user));
       localStorage.setItem(localStorageKey, JSON.stringify(user));
       blogService.setToken(user.token);
       setUsername("");
@@ -126,7 +117,7 @@ const App = () => {
     e.preventDefault();
 
     localStorage.removeItem(localStorageKey);
-    setUser(null);
+    setUser({} as IUser);
   };
 
   const createNewBlog = async (
@@ -150,7 +141,7 @@ const App = () => {
     }
   };
 
-  if (user === null) {
+  if (user === null || user === undefined) {
     return (
       <div>
         <Notification notification={notification} />
