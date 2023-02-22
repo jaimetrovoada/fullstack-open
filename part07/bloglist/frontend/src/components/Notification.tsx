@@ -1,18 +1,20 @@
-import React from 'react'
+import React from "react";
+import { INotification } from "../reducers";
 
-const Notification = ({
-  message,
-}: {
-  message: {
-    type: 'success' | 'error';
-    msg: string;
-  } | null;
-}) => {
-  if (message === null) {
-    return null
-  }
-
-  return <div className={message.type} id="notification">{message.msg}</div>
+interface Props {
+  notification: INotification;
 }
 
-export default Notification
+const Notification: React.FC<Props> = ({ notification }) => {
+  if (notification === null || notification.msg === "") {
+    return null;
+  }
+
+  return (
+    <div className={notification.type} id="notification">
+      {notification.msg}
+    </div>
+  );
+};
+
+export default Notification;
