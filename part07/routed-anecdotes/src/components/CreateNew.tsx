@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Anecdote } from './List'
 import { useNavigate } from 'react-router-dom'
 import { useField } from '../hooks'
@@ -9,9 +9,9 @@ interface Props {
 
 const CreateNew: React.FC<Props> = ({ addNew }) => {
 
-  const contentField = useField('text')
-  const authorField = useField('text')
-  const infoField = useField('text')
+  const { reset: resetContent, ...contentField } = useField('text')
+  const { reset: resetAuthor, ...authorField } = useField('text')
+  const { reset: resetInfo, ...infoField } = useField('text')
 
   const navigate = useNavigate()
 
@@ -28,10 +28,16 @@ const CreateNew: React.FC<Props> = ({ addNew }) => {
     navigate('/')
   }
 
+  const handleReset = () => {
+    resetContent()
+    resetAuthor()
+    resetInfo()
+  }
+
   return (
     <div>
       <h2>create a new anecdote</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} onReset={handleReset}>
         <div>
           content
           <input name='content' {...contentField} />
@@ -44,7 +50,10 @@ const CreateNew: React.FC<Props> = ({ addNew }) => {
           url for more info
           <input name='info' {...infoField} />
         </div>
-        <button>create</button>
+        <div>
+          <button type='submit'>create</button>
+          <button type='reset' >reset</button>
+        </div>
       </form>
     </div>
   )
