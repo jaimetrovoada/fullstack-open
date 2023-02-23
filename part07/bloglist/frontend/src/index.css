@@ -33,3 +33,15 @@
 .blogItem--body.show {
   display: block;
 }
+
+.nav {
+  display: flex;
+  gap: 1rem;
+  background-color: lightgray;
+  padding: 5px;
+  margin-bottom: 1rem;
+}
+
+.nav p {
+  margin: 0;
+}

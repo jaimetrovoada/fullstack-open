@@ -26,6 +26,7 @@ import UsersView from "./components/UsersView";
 import usersService from "./services/users";
 import UserView from "./components/UserView";
 import BlogView from "./components/BlogView";
+import Nav from "./components/Nav";
 
 const App = () => {
   const [username, setUsername] = useState<string>("");
@@ -106,7 +107,6 @@ const App = () => {
       dispatch(setUserList(res));
     });
   }, []);
-  console.log({ userList, blogs });
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -158,6 +158,7 @@ const App = () => {
 
   return (
     <>
+      <Nav handleLogout={handleLogout} user={user} />
       <Notification notification={notification} />
       <header>
         {user === null || user === undefined ? (
@@ -167,13 +168,6 @@ const App = () => {
         ) : (
           <>
             <h2>blogs</h2>
-            <div>
-              <Link to="/users">{user.name}</Link>
-              logged in
-            </div>
-            <button className="logout-btn" onClick={handleLogout}>
-              log out
-            </button>
             <br />
           </>
         )}
