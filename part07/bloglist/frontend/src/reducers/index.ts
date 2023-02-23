@@ -1,6 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
 import blogsService from "../services/blogs";
-import { StringMappingType } from "typescript";
 
 export interface INotification {
   msg: string;

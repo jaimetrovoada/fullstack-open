@@ -14,6 +14,11 @@ const getAll = () => {
   return request.then((response) => response.data);
 };
 
+const getBlog = (id: string) => {
+  const request = axios.get(`${baseUrl}/${id}`);
+  return request.then((response) => response.data);
+};
+
 const addNewBlog = async ({
   title,
   author,
@@ -53,4 +58,4 @@ const deleteBlog = async (id: string) => {
   return response.data;
 };
 
-export default { getAll, setToken, addNewBlog, likeBlog, deleteBlog };
+export default { getAll, getBlog, setToken, addNewBlog, likeBlog, deleteBlog };

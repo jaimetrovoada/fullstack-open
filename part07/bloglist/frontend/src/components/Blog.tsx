@@ -1,62 +1,14 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useRef, useState } from "react";
+import React from "react";
 import { IBlog } from "../reducers";
+import { Link } from "react-router-dom";
 
-const Blog = ({
-  blog,
-  likeBlog,
-  deleteBlog,
-}: {
-  blog: IBlog;
-  likeBlog: (...args: any[]) => void;
-  deleteBlog: (...args: any[]) => void;
-}) => {
-  const blogItemBody = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState<boolean>(false);
-
-  const toggleBody = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.preventDefault();
-
-    blogItemBody.current?.classList.toggle("show");
-    setIsVisible((prev) => !prev);
-  };
-
-  const blogItemBodyStyles = isVisible
-    ? { display: "block" }
-    : { display: "none" };
-  const loginDetails = window.localStorage.getItem("logginDetails");
-  const user = loginDetails ? JSON.parse(loginDetails) : null;
-
-  const isCreator = blog.user.username === user.username;
-
+const Blog = ({ blog }: { blog: IBlog }) => {
   return (
     <div className="blogItem">
       <div className="blogItem--header">
-        {blog.title} {blog.author}
-        <button className="blogItem--button" onClick={toggleBody}>
-          {isVisible ? "hide" : "view"}
-        </button>
-      </div>
-      <div
-        style={blogItemBodyStyles}
-        className="blogItem--body"
-        ref={blogItemBody}
-      >
-        <a href={blog.url} target="_blank" rel="noreferrer">
-          {blog.url}
-        </a>
-        <p>
-          likes {blog.likes}
-          <button className="blogItem--like" onClick={() => likeBlog(blog)}>
-            like
-          </button>
-        </p>
-        <p>{blog.user.name}</p>
-        {isCreator ? (
-          <button className="blogItem--delete" onClick={() => deleteBlog(blog)}>
-            delete
-          </button>
-        ) : null}
+        <Link to={`/blogs/${blog.id}`}>
+          {blog.title} {blog.author}
+        </Link>
       </div>
     </div>
   );

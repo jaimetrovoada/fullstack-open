@@ -1,11 +1,20 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { IBlogUser } from "../reducers";
+import { useMatch } from "react-router-dom";
+import users from "../services/users";
 
-interface Props {
-  user: IBlogUser;
-}
+const UserView = () => {
+  const [user, setUser] = useState<IBlogUser>();
+  const userMatch = useMatch("/users/:id")?.params.id;
 
-const UserView: React.FC<Props> = ({ user }) => {
+  useEffect(() => {
+    users.getAll().then((res) => {
+      setUser(res.find((user: IBlogUser) => user.id === userMatch));
+    });
+  });
+
+  if (!user) return null;
+
   return (
     <div>
       <h2>{user.name}</h2>

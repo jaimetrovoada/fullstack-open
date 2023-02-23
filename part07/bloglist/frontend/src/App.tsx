@@ -25,6 +25,7 @@ import { Routes, Route, Link, useMatch } from "react-router-dom";
 import UsersView from "./components/UsersView";
 import usersService from "./services/users";
 import UserView from "./components/UserView";
+import BlogView from "./components/BlogView";
 
 const App = () => {
   const [username, setUsername] = useState<string>("");
@@ -144,7 +145,6 @@ const App = () => {
 
     try {
       const _newBlog = await blogService.addNewBlog({ title, author, url });
-      console.log({ newBlog });
       dispatch(newBlog(_newBlog));
       sendNotification({
         type: "success",
@@ -155,12 +155,6 @@ const App = () => {
       sendNotification({ type: "error", msg: "adding new blog failed" });
     }
   };
-
-  const userMatch = useMatch("/users/:id")?.params.id;
-  console.log({ userMatch });
-  const userToDisplay = userMatch
-    ? userList.find((u) => u.id === userMatch)
-    : null;
 
   return (
     <>
@@ -225,12 +219,7 @@ const App = () => {
                     {blogs
                       // .sort((a, b) => b.likes - a.likes)
                       .map((blog: any) => (
-                        <Blog
-                          key={blog.id}
-                          blog={blog}
-                          deleteBlog={deleteBlog}
-                          likeBlog={voteBlog}
-                        />
+                        <Blog key={blog.id} blog={blog} />
                       ))}
                   </div>
                 </>
@@ -239,9 +228,10 @@ const App = () => {
           }
         />
         <Route path="/users" element={<UsersView users={userList} />} />
+        <Route path="/users/:id" element={<UserView />} />
         <Route
-          path="/users/:id"
-          element={<UserView user={userToDisplay as IBlogUser} />}
+          path="/blogs/:id"
+          element={<BlogView vote={voteBlog} deleteBlog={deleteBlog} />}
         />
       </Routes>
     </>
