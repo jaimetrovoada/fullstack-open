@@ -1,5 +1,6 @@
 import React from "react";
 import { IBlogUser } from "../reducers";
+import { Link } from "react-router-dom";
 
 interface Props {
   users: IBlogUser[];
@@ -19,7 +20,9 @@ const UsersView: React.FC<Props> = ({ users }) => {
         <tbody>
           {users.map((user) => (
             <tr key={user.id}>
-              <td>{user.name}</td>
+              <td>
+                <Link to={`/users/${user.id}`}>{user.name}</Link>
+              </td>
               <td>{user.blogs.length}</td>
             </tr>
           ))}

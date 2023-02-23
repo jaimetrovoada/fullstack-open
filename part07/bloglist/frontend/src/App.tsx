@@ -20,9 +20,10 @@ import {
   IBlogUser,
 } from "./reducers";
 import { useDispatch, useSelector } from "react-redux";
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route, Link, useMatch } from "react-router-dom";
 import UsersView from "./components/UsersView";
 import usersService from "./services/users";
+import UserView from "./components/UserView";
 
 const App = () => {
   const [username, setUsername] = useState<string>("");
@@ -153,6 +154,12 @@ const App = () => {
     }
   };
 
+  const userMatch = useMatch("/users/:id")?.params.id;
+  console.log({ userMatch });
+  const userToDisplay = userMatch
+    ? userList.find((u) => u.id === userMatch)
+    : null;
+
   return (
     <>
       <Notification notification={notification} />
@@ -230,6 +237,10 @@ const App = () => {
           }
         />
         <Route path="/users" element={<UsersView users={userList} />} />
+        <Route
+          path="/users/:id"
+          element={<UserView user={userToDisplay as IBlogUser} />}
+        />
       </Routes>
     </>
   );

@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import blogsService from "../services/blogs";
+import { StringMappingType } from "typescript";
 
 export interface INotification {
   msg: string;
@@ -10,7 +11,12 @@ export interface IBlogUser {
   id: string;
   name: string;
   username: string;
-  blogs: string[];
+  blogs: {
+    id: string;
+    title: string;
+    author: string;
+    url: string;
+  }[];
 }
 export interface IBlog {
   title: string;
