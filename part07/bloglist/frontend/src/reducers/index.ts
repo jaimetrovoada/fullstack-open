@@ -24,6 +24,7 @@ export interface IBlog {
   url: string;
   likes: number;
   user: Omit<IBlogUser, "blogs">;
+  comments: string[];
 }
 
 export interface IUser {
@@ -69,6 +70,13 @@ const blogsSlice = createSlice({
     removeBlog(state, action: { payload: IBlog["id"] }) {
       return state.filter((blog) => blog.id !== action.payload);
     },
+    commentBlog(state, action: { payload: IBlog }) {
+      return state.map((blog) =>
+        blog.id === action.payload.id
+          ? { ...blog, comments: action.payload.comments }
+          : blog
+      );
+    },
   },
 });
 
@@ -100,7 +108,8 @@ const reducer = {
 export default reducer;
 
 export const { setNotification } = notificationSlice.actions;
-export const { setBlogs, newBlog, removeBlog, likeBlog } = blogsSlice.actions;
+export const { setBlogs, newBlog, removeBlog, likeBlog, commentBlog } =
+  blogsSlice.actions;
 export const { setUser } = userSlice.actions;
 export const { setUserList } = userListSlice.actions;
 

@@ -65,6 +65,24 @@ router.post("/", userExtractor, async (request: IRequest, response, next) => {
   }
 });
 
+router.post("/:id/comments", async (request: IRequest, response, next) => {
+  try {
+    if (!request.body) {
+      return response.status(400).end();
+    }
+    const blog = await Blog.findByIdAndUpdate(request.params.id, request.body, {
+      new: true,
+    });
+    await blog.populate("user", { username: 1, name: 1 });
+    if (!blog) {
+      return response.status(404).end();
+    }
+    response.status(201).json(blog);
+  } catch (exception) {
+    next(exception);
+  }
+});
+
 router.delete("/:id", userExtractor, async (req: IRequest, res, next) => {
   const id = req.params.id;
   const { user } = req;

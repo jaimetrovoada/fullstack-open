@@ -19,9 +19,10 @@ import {
   setUserList,
   IBlogUser,
   newBlog,
+  commentBlog,
 } from "./reducers";
 import { useDispatch, useSelector } from "react-redux";
-import { Routes, Route, Link, useMatch } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import UsersView from "./components/UsersView";
 import usersService from "./services/users";
 import UserView from "./components/UserView";
@@ -31,9 +32,9 @@ import Nav from "./components/Nav";
 const App = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  // const [user, setUser] = useState<any>(null);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const notification = useSelector<RootState, INotification>(
     (state) => state.notification
@@ -78,9 +79,10 @@ const App = () => {
     try {
       window.alert(`remove blog ${blog.title} by ${blog.author}?`);
       await blogService.deleteBlog(blog.id);
-      sendNotification({ type: "success", msg: `deleted ${blog.title}` });
-
       dispatch(removeBlog(blog.id));
+
+      sendNotification({ type: "success", msg: `deleted ${blog.title}` });
+      navigate("/");
     } catch (err) {
       console.log({ err });
       sendNotification({ type: "error", msg: "delete blog failed" });
@@ -156,6 +158,33 @@ const App = () => {
     }
   };
 
+  const onComment = async (
+    e: React.FormEvent<HTMLFormElement>,
+    blog: IBlog,
+    comment: string
+  ) => {
+    e.preventDefault();
+    const newComment = [...blog.comments, comment];
+    const updateBlog = {
+      ...blog,
+      comments: newComment,
+      user: blog.user.id,
+    };
+
+    try {
+      const res = await blogService.commentBlog(updateBlog);
+
+      dispatch(commentBlog(res));
+      sendNotification({
+        type: "success",
+        msg: `commented ${comment}`,
+      });
+    } catch (err) {
+      console.log({ err });
+      sendNotification({ type: "error", msg: "commenting on blog failed" });
+    }
+  };
+
   return (
     <>
       <Nav handleLogout={handleLogout} user={user} />
@@ -225,7 +254,13 @@ const App = () => {
         <Route path="/users/:id" element={<UserView />} />
         <Route
           path="/blogs/:id"
-          element={<BlogView vote={voteBlog} deleteBlog={deleteBlog} />}
+          element={
+            <BlogView
+              vote={voteBlog}
+              deleteBlog={deleteBlog}
+              onComment={onComment}
+            />
+          }
         />
       </Routes>
     </>
