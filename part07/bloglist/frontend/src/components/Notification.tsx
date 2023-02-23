@@ -11,8 +11,11 @@ const Notification: React.FC<Props> = ({ notification }) => {
   }
 
   return (
-    <div className={notification.type} id="notification">
-      {notification.msg}
+    <div
+      className={`${notification.type} absolute top-4 right-4 rounded-xl border p-4 text-xl`}
+      id="notification"
+    >
+      <p>{notification.msg}</p>
     </div>
   );
 };

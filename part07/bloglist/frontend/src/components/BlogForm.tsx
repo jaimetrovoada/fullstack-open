@@ -20,7 +20,7 @@ const BlogForm = ({
   if (!isVisible) {
     return (
       <>
-        <button className="showFormBtn" onClick={() => setIsVisible(true)}>
+        <button className="" onClick={() => setIsVisible(true)}>
           create new blog
         </button>
       </>
@@ -28,8 +28,11 @@ const BlogForm = ({
   }
   return (
     <>
-      <form onSubmit={(e) => createNewBlog(e, title, author, url)}>
-        <div>
+      <form
+        onSubmit={(e) => createNewBlog(e, title, author, url)}
+        className="flex max-w-sm flex-col gap-4"
+      >
+        <div className="flex flex-col gap-1 text-xl font-bold">
           title:
           <input
             type="text"
@@ -38,7 +41,7 @@ const BlogForm = ({
             onChange={({ target }) => setTitle(target.value)}
           />
         </div>
-        <div>
+        <div className="flex flex-col gap-1 text-xl font-bold">
           author:
           <input
             type="text"
@@ -47,7 +50,7 @@ const BlogForm = ({
             onChange={({ target }) => setAuthor(target.value)}
           />
         </div>
-        <div>
+        <div className="flex flex-col gap-1 text-xl font-bold">
           url:
           <input
             type="url"
@@ -56,13 +59,18 @@ const BlogForm = ({
             onChange={({ target }) => setUrl(target.value)}
           />
         </div>
-        <button className="submitFormBtn" type="submit">
-          create
-        </button>
+        <div className="flex flex-row gap-4">
+          <button className="bg-slate-800 hover:bg-green-600" type="submit">
+            create
+          </button>
+          <button
+            className="bg-slate-800 hover:bg-red-600"
+            onClick={() => setIsVisible(false)}
+          >
+            cancel
+          </button>
+        </div>
       </form>
-      <button className="hideFormBtn" onClick={() => setIsVisible(false)}>
-        cancel
-      </button>
     </>
   );
 };

@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useEffect } from "react";
-import Blog from "./components/Blog";
+import { useEffect } from "react";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import BlogForm from "./components/BlogForm";
@@ -28,11 +27,10 @@ import usersService from "./services/users";
 import UserView from "./components/UserView";
 import BlogView from "./components/BlogView";
 import Nav from "./components/Nav";
+import LoginForm from "./components/LoginForm";
+import BlogList from "./components/BlogList";
 
 const App = () => {
-  const [username, setUsername] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -110,7 +108,11 @@ const App = () => {
     });
   }, []);
 
-  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (
+    e: React.FormEvent<HTMLFormElement>,
+    username: string,
+    password: string
+  ) => {
     e.preventDefault();
 
     try {
@@ -118,8 +120,6 @@ const App = () => {
       dispatch(setUser(user));
       localStorage.setItem(localStorageKey, JSON.stringify(user));
       blogService.setToken(user.token);
-      setUsername("");
-      setPassword("");
       sendNotification({
         type: "success",
         msg: `logged in as ${user.username}`,
@@ -134,7 +134,8 @@ const App = () => {
     e.preventDefault();
 
     localStorage.removeItem(localStorageKey);
-    setUser({} as IUser);
+    dispatch(setUser({} as IUser));
+    sendNotification({ type: "success", msg: "logged out" });
   };
 
   const createNewBlog = async (
@@ -184,13 +185,14 @@ const App = () => {
       sendNotification({ type: "error", msg: "commenting on blog failed" });
     }
   };
+  console.log({ user });
 
   return (
     <>
       <Nav handleLogout={handleLogout} user={user} />
-      <Notification notification={notification} />
-      <header>
-        {user === null || user === undefined ? (
+      <main className="relative p-4">
+        <Notification notification={notification} />
+        {user.token === null || user.token === undefined ? (
           <>
             <h2>Log in to application</h2>
           </>
@@ -200,69 +202,38 @@ const App = () => {
             <br />
           </>
         )}
-      </header>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <div>
-              {user === null || user === undefined ? (
-                <>
-                  <div>
-                    <form onSubmit={handleLogin} id="login-form">
-                      <div>
-                        username{" "}
-                        <input
-                          type="text"
-                          name="username"
-                          id="username"
-                          onChange={({ target }) => setUsername(target.value)}
-                        />
-                      </div>
-                      <div>
-                        password{" "}
-                        <input
-                          type="password"
-                          name="password"
-                          id="password"
-                          onChange={({ target }) => setPassword(target.value)}
-                        />
-                      </div>
-                      <button type="submit" className="loginBtn">
-                        login
-                      </button>
-                    </form>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <BlogForm createNewBlog={createNewBlog} />
-                  <br />
-                  <div className="blogSection">
-                    {blogs
-                      // .sort((a, b) => b.likes - a.likes)
-                      .map((blog: any) => (
-                        <Blog key={blog.id} blog={blog} />
-                      ))}
-                  </div>
-                </>
-              )}
-            </div>
-          }
-        />
-        <Route path="/users" element={<UsersView users={userList} />} />
-        <Route path="/users/:id" element={<UserView />} />
-        <Route
-          path="/blogs/:id"
-          element={
-            <BlogView
-              vote={voteBlog}
-              deleteBlog={deleteBlog}
-              onComment={onComment}
-            />
-          }
-        />
-      </Routes>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <div>
+                {user.token === null || user.token === undefined ? (
+                  <>
+                    <LoginForm handleLogin={handleLogin} />
+                  </>
+                ) : (
+                  <>
+                    <BlogForm createNewBlog={createNewBlog} />
+                    <BlogList blogs={blogs} />
+                  </>
+                )}
+              </div>
+            }
+          />
+          <Route path="/users" element={<UsersView users={userList} />} />
+          <Route path="/users/:id" element={<UserView />} />
+          <Route
+            path="/blogs/:id"
+            element={
+              <BlogView
+                vote={voteBlog}
+                deleteBlog={deleteBlog}
+                onComment={onComment}
+              />
+            }
+          />
+        </Routes>
+      </main>
     </>
   );
 };

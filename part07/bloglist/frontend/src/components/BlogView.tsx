@@ -29,7 +29,7 @@ const BlogView: React.FC<Props> = ({ vote, deleteBlog, onComment }) => {
   }
 
   return (
-    <div>
+    <div className="flex flex-col gap-2">
       <h2>
         {blog.title} {blog.author}
       </h2>
@@ -38,7 +38,7 @@ const BlogView: React.FC<Props> = ({ vote, deleteBlog, onComment }) => {
         {blog.url}
       </Link>
       <div>
-        <span>likes {blog.likes}</span>
+        <span className="mr-2">likes {blog.likes}</span>
         <button onClick={() => vote(blog)}>like</button>
       </div>
       <button onClick={() => deleteBlog(blog)}>delete</button>
@@ -52,9 +52,11 @@ const BlogView: React.FC<Props> = ({ vote, deleteBlog, onComment }) => {
         />
         <button type="submit">add comment</button>
       </form>
-      <ul>
+      <ul className="list-inside list-disc">
         {blog.comments.map((comment) => (
-          <li key={comment}>{comment}</li>
+          <li key={comment} className="list-item">
+            {comment}
+          </li>
         ))}
       </ul>
     </div>

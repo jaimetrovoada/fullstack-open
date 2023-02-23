@@ -4,12 +4,10 @@ import { Link } from "react-router-dom";
 
 const Blog = ({ blog }: { blog: IBlog }) => {
   return (
-    <div className="blogItem">
-      <div className="blogItem--header">
-        <Link to={`/blogs/${blog.id}`}>
-          {blog.title} {blog.author}
-        </Link>
-      </div>
+    <div className="rounded-md border p-2 odd:bg-slate-600 even:bg-slate-500">
+      <Link to={`/blogs/${blog.id}`}>
+        {blog.title} {blog.author}
+      </Link>
     </div>
   );
 };

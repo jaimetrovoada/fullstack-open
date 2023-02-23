@@ -10,20 +10,20 @@ const UsersView: React.FC<Props> = ({ users }) => {
   return (
     <div>
       <h2>Users</h2>
-      <table>
-        <thead>
+      <table className="border">
+        <thead className="border-b">
           <tr>
-            <th>&nbsp;</th>
-            <th>blogs created</th>
+            <th className="p-2">User</th>
+            <th className="p-2">blogs created</th>
           </tr>
         </thead>
         <tbody>
           {users.map((user) => (
-            <tr key={user.id}>
-              <td>
+            <tr key={user.id} className="odd:bg-slate-500 even:bg-slate-600">
+              <td className="p-2">
                 <Link to={`/users/${user.id}`}>{user.name}</Link>
               </td>
-              <td>{user.blogs.length}</td>
+              <td className="p-2">{user.blogs.length}</td>
             </tr>
           ))}
         </tbody>

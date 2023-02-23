@@ -82,7 +82,7 @@ const blogsSlice = createSlice({
 
 const userSlice = createSlice({
   name: "user",
-  initialState: {} as IUser,
+  initialState: {},
   reducers: {
     setUser(state, action: { payload: IUser }) {
       return action.payload;

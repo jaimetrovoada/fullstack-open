@@ -20,9 +20,11 @@ const UserView = () => {
       <h2>{user.name}</h2>
       <h3>added blogs</h3>
       {user.blogs ? (
-        <ul>
+        <ul className="list-inside list-disc">
           {user.blogs.map((blog) => (
-            <li key={blog.id}>{blog.title}</li>
+            <li key={blog.id} className="list-item">
+              {blog.title}
+            </li>
           ))}
         </ul>
       ) : null}
