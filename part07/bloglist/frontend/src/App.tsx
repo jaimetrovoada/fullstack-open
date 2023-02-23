@@ -10,15 +10,19 @@ import {
   IBlog,
   INotification,
   RootState,
-  setBlogs,
   setNotification,
   removeBlog,
   likeBlog,
   initBlogs,
   setUser,
   IUser,
+  setUserList,
+  IBlogUser,
 } from "./reducers";
 import { useDispatch, useSelector } from "react-redux";
+import { Routes, Route, Link } from "react-router-dom";
+import UsersView from "./components/UsersView";
+import usersService from "./services/users";
 
 const App = () => {
   const [username, setUsername] = useState<string>("");
@@ -34,6 +38,9 @@ const App = () => {
   const blogs = useSelector<RootState, IBlog[]>((state) => state.blogs);
 
   const user = useSelector<RootState, IUser>((state) => state.user);
+  const userList = useSelector<RootState, IBlogUser[]>(
+    (state) => state.userList
+  );
 
   const localStorage = window.localStorage;
   const localStorageKey = "logginDetails";
@@ -91,7 +98,12 @@ const App = () => {
 
   useEffect(() => {
     dispatch<any>(initBlogs());
+    usersService.getAll().then((res) => {
+      console.log({ res });
+      dispatch(setUserList(res));
+    });
   }, []);
+  console.log({ userList, blogs });
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -141,62 +153,85 @@ const App = () => {
     }
   };
 
-  if (user === null || user === undefined) {
-    return (
-      <div>
-        <Notification notification={notification} />
-        <h2>Log in to application</h2>
-        <form onSubmit={handleLogin} id="login-form">
-          <div>
-            username{" "}
-            <input
-              type="text"
-              name="username"
-              id="username"
-              onChange={({ target }) => setUsername(target.value)}
-            />
-          </div>
-          <div>
-            password{" "}
-            <input
-              type="password"
-              name="password"
-              id="password"
-              onChange={({ target }) => setPassword(target.value)}
-            />
-          </div>
-          <button type="submit" className="loginBtn">
-            login
-          </button>
-        </form>
-      </div>
-    );
-  }
-
   return (
-    <div>
+    <>
       <Notification notification={notification} />
-      <h2>blogs</h2>
-      <div>{user.username} logged in</div>
-      <button className="logout-btn" onClick={handleLogout}>
-        log out
-      </button>
-      <br />
-      <BlogForm createNewBlog={createNewBlog} />
-      <br />
-      <div className="blogSection">
-        {blogs
-          // .sort((a, b) => b.likes - a.likes)
-          .map((blog: any) => (
-            <Blog
-              key={blog.id}
-              blog={blog}
-              deleteBlog={deleteBlog}
-              likeBlog={voteBlog}
-            />
-          ))}
-      </div>
-    </div>
+      <header>
+        {user === null || user === undefined ? (
+          <>
+            <h2>Log in to application</h2>
+          </>
+        ) : (
+          <>
+            <h2>blogs</h2>
+            <div>
+              <Link to="/users">{user.name}</Link>
+              logged in
+            </div>
+            <button className="logout-btn" onClick={handleLogout}>
+              log out
+            </button>
+            <br />
+          </>
+        )}
+      </header>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <div>
+              {user === null || user === undefined ? (
+                <>
+                  <div>
+                    <form onSubmit={handleLogin} id="login-form">
+                      <div>
+                        username{" "}
+                        <input
+                          type="text"
+                          name="username"
+                          id="username"
+                          onChange={({ target }) => setUsername(target.value)}
+                        />
+                      </div>
+                      <div>
+                        password{" "}
+                        <input
+                          type="password"
+                          name="password"
+                          id="password"
+                          onChange={({ target }) => setPassword(target.value)}
+                        />
+                      </div>
+                      <button type="submit" className="loginBtn">
+                        login
+                      </button>
+                    </form>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <BlogForm createNewBlog={createNewBlog} />
+                  <br />
+                  <div className="blogSection">
+                    {blogs
+                      // .sort((a, b) => b.likes - a.likes)
+                      .map((blog: any) => (
+                        <Blog
+                          key={blog.id}
+                          blog={blog}
+                          deleteBlog={deleteBlog}
+                          likeBlog={voteBlog}
+                        />
+                      ))}
+                  </div>
+                </>
+              )}
+            </div>
+          }
+        />
+        <Route path="/users" element={<UsersView users={userList} />} />
+      </Routes>
+    </>
   );
 };
 
