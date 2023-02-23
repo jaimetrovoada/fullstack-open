@@ -18,6 +18,7 @@ import {
   IUser,
   setUserList,
   IBlogUser,
+  newBlog,
 } from "./reducers";
 import { useDispatch, useSelector } from "react-redux";
 import { Routes, Route, Link, useMatch } from "react-router-dom";
@@ -142,11 +143,12 @@ const App = () => {
     e.preventDefault();
 
     try {
-      const newBlog = await blogService.addNewBlog({ title, author, url });
-      dispatch(newBlog(newBlog));
+      const _newBlog = await blogService.addNewBlog({ title, author, url });
+      console.log({ newBlog });
+      dispatch(newBlog(_newBlog));
       sendNotification({
         type: "success",
-        msg: `a new blog: ${newBlog.title} by ${newBlog.author} added`,
+        msg: `a new blog: ${_newBlog.title} by ${_newBlog.author} added`,
       });
     } catch (err) {
       console.log({ err });
